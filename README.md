@@ -32,6 +32,17 @@ Nie są one jednak jeszcze zbyt popularne - czy możemy się dowiedzieć, które
 
 # Definicja Problemu Biznesowego
 
+**Kontekst:** serwis muzyczny, który pozwala na odtwarzanie utworów online.
+
+Serwis udostępnia dwa pakiety:
+- darmowy - użytkownicy pomiędzy piosenkami mają puszczane reklamy
+- premium - użytkownicy dowoli mogą słuchać muzyki bez reklam
+
+**Zadanie biznesowe:** uargumentowanie decyzji, dlaczego dany użytkownik zdecydował się wybrać konto premium
+
+**Biznesowe kryterium sukcesu:** TODO - system przewiduje z pewnością 70%, że dany użytkownik kupi konto premium xD
+
+
 ### Zrozumienie zagadnienia
 <!-- Musimy zrozumieć, co tak naprawdę jest do zrobienia i ustalić, jak to osiągnąć. -->
 
