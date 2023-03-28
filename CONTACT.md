@@ -106,6 +106,8 @@ Chcielibyśmy uzyskać także dane użytkowników nie premium, aby mieć porówn
 
 > "track_id": null
 
+Szczególnie gdy event_type jest ustawione na ADVERTISEMENT lub BUY_PREMIUM.
+
 +-------+----------+--------+-------------+--------------------+                
 |user_id|session_id|track_id|   event_type|           timestamp|
 +-------+----------+--------+-------------+--------------------+
@@ -130,7 +132,6 @@ Chcielibyśmy uzyskać także dane użytkowników nie premium, aby mieć porówn
 |    133|       525|        |ADVERTISEMENT|2022-05-31T05:59:...|
 |    134|       543|        |ADVERTISEMENT|2022-06-17T18:21:...|
 +-------+----------+--------+-------------+--------------------+
-
 
 I tak samo buy premium:
 
@@ -159,7 +160,6 @@ I tak samo buy premium:
 |    120|       375|        |BUY_PREMIUM|2022-04-26T07:12:...|
 +-------+----------+--------+-----------+--------------------+
 
-Szczególnie gdy event_type jest ustawione na ADVERTISEMENT.
 
 Generalnie jest mało danych:
 
@@ -210,6 +210,8 @@ W 200 przypadkach.
 W 183 przypadkach.
 
 ## Track Storage
+
+Gdzie przechowujecie reklamy? Czy macie jakąś wydzieloną bazę danych?
 
 > storage_class
 
