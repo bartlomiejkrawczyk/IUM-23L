@@ -1,0 +1,50 @@
+{"user_id": 101, "name": "Marika Pilipczuk", "city": "Warszawa", "street": "ul. Ksi\u0119\u017cycowa 31", "favourite_genres": ["motown", "soul", "regional mexican"], "premium_user": true}
+{"user_id": 102, "name": "Anita Pioch", "city": "Gdynia", "street": "plac Sadowa 527", "favourite_genres": ["regional mexican", "psychedelic rock", "new romantic"], "premium_user": true}
+{"user_id": 103, "name": "Jan Gryga", "city": "Krak\u00f3w", "street": "plac Wyspia\u0144skiego 73/43", "favourite_genres": ["soul", "mellow gold", "blues rock"], "premium_user": true}
+{"user_id": 104, "name": "Ksawery Klus", "city": "Wroc\u0142aw", "street": "ulica D\u0142ugosza 71/06", "favourite_genres": ["permanent wave", "post-teen pop", "mandopop"], "premium_user": true}
+{"user_id": 105, "name": "Maciej Bandyk", "city": "Gdynia", "street": "ul. Rybacka 07", "favourite_genres": ["metal", "new wave", "argentine rock"], "premium_user": true}
+{"user_id": 106, "name": "Nikodem Kopciuch", "city": "Krak\u00f3w", "street": "pl. Promienna 59/43", "favourite_genres": null, "premium_user": true}
+{"user_id": 107, "name": "Kacper Osojca", "city": "Pozna\u0144", "street": "pl. Staszica 343", "favourite_genres": ["europop", "folk", "tropical"], "premium_user": true}
+{"user_id": 108, "name": "Maurycy Szoka", "city": "Warszawa", "street": "al. T\u0119czowa 332", "favourite_genres": ["new wave", "psychedelic rock", "soft rock"], "premium_user": true}
+{"user_id": 109, "name": "Sebastian Molka", "city": "Szczecin", "street": "al. Armii Krajowej 564", "favourite_genres": ["roots rock", "latin pop", "alternative metal"], "premium_user": true}
+{"user_id": 110, "name": "Filip Kalinka", "city": "Krak\u00f3w", "street": "aleja Bema 889", "favourite_genres": ["lounge", "hoerspiel", "album rock"], "premium_user": true}
+{"user_id": 111, "name": "Krzysztof Wojtach", "city": "Pozna\u0144", "street": "aleja Prusa 830", "favourite_genres": ["classic rock", "pop rock", "soft rock"], "premium_user": true}
+{"user_id": 112, "name": "Melania Ga\u0142at", "city": "Gdynia", "street": "pl. Mazurska 345", "favourite_genres": ["rock en espanol", "new wave pop", "italian adult pop"], "premium_user": true}
+{"user_id": 113, "name": "Stefan Bisaga", "city": "Pozna\u0144", "street": "aleja Tartaczna 95", "favourite_genres": ["new romantic", "art rock", "new wave"], "premium_user": true}
+{"user_id": 114, "name": "Dawid Koperek", "city": "Radom", "street": "al. Podle\u015bna 00", "favourite_genres": ["pop", "new wave pop", "motown"], "premium_user": true, "id": -1}
+{"user_id": 115, "name": "Albert Brze\u017aniak", "city": "Krak\u00f3w", "street": "plac Floriana 59/72", "favourite_genres": ["new romantic", "country rock", "brill building pop"], "premium_user": true}
+{"user_id": 116, "name": "Borys Matula", "city": "Wroc\u0142aw", "street": "al. Szeroka 27/38", "favourite_genres": ["c-pop", "motown", "tropical"], "premium_user": true}
+{"user_id": 117, "name": "Julianna Wi\u0119ckiewicz", "city": "Warszawa", "street": "aleja Urocza 19", "favourite_genres": ["roots rock", "modern rock", "j-pop"], "premium_user": true}
+{"user_id": 118, "name": "Oskar Jarosik", "city": "Warszawa", "street": "ul. Konopnickiej 038", "favourite_genres": ["modern rock", "adult standards", "pop rock"], "premium_user": true}
+{"user_id": 119, "name": "Blanka Szklarek", "city": "Radom", "street": "al. Jesionowa 47", "favourite_genres": ["pop rock", "europop", "hoerspiel"], "premium_user": true}
+{"user_id": 120, "name": "Monika Sypie\u0144", "city": "Pozna\u0144", "street": "pl. Daszy\u0144skiego 80/41", "favourite_genres": ["modern rock", "tropical", "adult standards"], "premium_user": true}
+{"user_id": 121, "name": "Kornel Dacko", "city": "Krak\u00f3w", "street": "plac Kazimierza Wielkiego 51", "favourite_genres": ["alternative rock", "alternative metal", "vocal jazz"], "premium_user": true}
+{"user_id": 122, "name": "Bartek Garczyk", "city": "Gdynia", "street": "ulica Wi\u0105zowa 07/54", "favourite_genres": ["soul", "lounge", "pop rock"], "premium_user": true}
+{"user_id": 123, "name": "Maurycy Hutyra", "city": "Krak\u00f3w", "street": "aleja Stolarska 554", "favourite_genres": ["blues rock", "lounge", "post-teen pop"], "premium_user": true}
+{"user_id": 124, "name": "Oliwier Smalec", "city": "Radom", "street": "ul. Diamentowa 44", "favourite_genres": ["alternative rock", "permanent wave", "latin pop"], "premium_user": true}
+{"user_id": 125, "name": "Fryderyk Chabior", "city": "Wroc\u0142aw", "street": "ulica Torowa 80", "favourite_genres": ["funk", "classic rock", "europop"], "premium_user": true}
+{"user_id": 126, "name": "Nicole Gajdzik", "city": "Warszawa", "street": "pl. Orzeszkowej 21", "favourite_genres": ["motown", "vocal jazz", "mandopop"], "premium_user": true}
+{"user_id": 127, "name": "Krzysztof \u017buchowicz", "city": "Pozna\u0144", "street": "pl. Radosna 86/89", "favourite_genres": ["italian adult pop", "lounge", "folk rock"], "premium_user": true}
+{"user_id": 128, "name": "Janina Delekta", "city": "Radom", "street": "ulica Mokra 71", "favourite_genres": ["adult standards", "mpb", "funk"], "premium_user": null}
+{"user_id": 129, "name": "Nikodem Wawrzynowicz", "city": "Radom", "street": "plac S\u0142owicza 73", "favourite_genres": ["vocal jazz", "pop rock", "soul"], "premium_user": true}
+{"user_id": 130, "name": "Anna Maria Ignatiuk", "city": "Radom", "street": "ul. Ciasna 73", "favourite_genres": ["rock en espanol", "rock", "latin"], "premium_user": true}
+{"user_id": 131, "name": "Arkadiusz Krzywo\u0144", "city": "Krak\u00f3w", "street": "plac Sk\u0142adowa 526", "favourite_genres": ["mellow gold", "c-pop", "argentine rock"], "premium_user": true}
+{"user_id": 132, "name": "Gustaw Pilipczuk", "city": "Warszawa", "street": "aleja Zau\u0142ek 750", "favourite_genres": ["j-pop", "folk rock", "metal"], "premium_user": true}
+{"user_id": 133, "name": "\u0141ukasz Pielka", "city": "Radom", "street": "ulica Irysowa 483", "favourite_genres": ["rock", "lounge", "metal"], "premium_user": true}
+{"user_id": 134, "name": "Jerzy Husak", "city": "Warszawa", "street": "pl. Jagiello\u0144ska 607", "favourite_genres": ["mpb", "permanent wave", "hoerspiel"], "premium_user": null}
+{"user_id": 135, "name": "Filip \u0141ukowiak", "city": "Szczecin", "street": "ul. Brzoskwiniowa 81", "favourite_genres": ["regional mexican", "mellow gold", "folk rock"], "premium_user": true}
+{"user_id": 136, "name": "Eryk Ko\u0142ata", "city": "Radom", "street": "ulica Ksi\u0119\u017cycowa 11", "favourite_genres": ["latin rock", "rock", "folk rock"], "premium_user": true}
+{"user_id": 137, "name": "Cezary Getka", "city": "Gdynia", "street": "ulica Szpitalna 18", "favourite_genres": ["motown", "regional mexican", "folk"], "premium_user": true}
+{"user_id": 138, "name": "Kazimierz Stypa", "city": "Warszawa", "street": "ulica Konwaliowa 74", "favourite_genres": ["ranchera", "new romantic", "adult standards"], "premium_user": true}
+{"user_id": 139, "name": "Andrzej Doktor", "city": "Warszawa", "street": "pl. Jana 300", "favourite_genres": ["regional mexican", "rock en espanol", "argentine rock"], "premium_user": true, "id": -1}
+{"user_id": 140, "name": "Sylwia Feret", "city": "Gdynia", "street": "al. Konwaliowa 33", "favourite_genres": ["italian adult pop", "funk", "italian adult pop"], "premium_user": true}
+{"user_id": 141, "name": "Rados\u0142aw Musiolik", "city": "Gdynia", "street": "pl. S\u0142onecznikowa 79", "favourite_genres": ["post-teen pop", "psychedelic rock", "latin alternative"], "premium_user": true}
+{"user_id": 142, "name": "Ignacy Pniak", "city": "Wroc\u0142aw", "street": "ulica Witosa 98/28", "favourite_genres": ["alternative rock", "adult standards", "pop"], "premium_user": true}
+{"user_id": 143, "name": "Julita Kuliberda", "city": "Warszawa", "street": "plac Hutnicza 22", "favourite_genres": ["classic rock", "new romantic", "latin alternative"], "premium_user": true}
+{"user_id": 144, "name": "Liwia Chylak", "city": "Pozna\u0144", "street": "pl. Boles\u0142awa Chrobrego 047", "favourite_genres": ["new romantic", "rock", "modern rock"], "premium_user": true}
+{"user_id": 145, "name": "Adrianna Golak", "city": "Wroc\u0142aw", "street": "plac Krucza 84/60", "favourite_genres": ["permanent wave", "pop rock", "hoerspiel"], "premium_user": true, "id": -1}
+{"user_id": 146, "name": "Jacek Na\u0142\u0119cz", "city": "Wroc\u0142aw", "street": "ulica Prusa 95", "favourite_genres": ["tropical", "latin alternative", "tropical"], "premium_user": true, "id": -1}
+{"user_id": 147, "name": "Nicole Bat\u00f3g", "city": "Krak\u00f3w", "street": "plac Jarz\u0119binowa 87/73", "favourite_genres": ["mpb", "rock", "latin"], "premium_user": true}
+{"user_id": 148, "name": "Kalina Kuster", "city": "Warszawa", "street": "al. Okrzei 69", "favourite_genres": ["psychedelic rock", "mandopop", "vocal jazz"], "premium_user": true}
+{"user_id": 149, "name": "Nikodem Br\u00f3dka", "city": "Warszawa", "street": "plac Storczykowa 23", "favourite_genres": ["adult standards", "alternative metal", "album rock"], "premium_user": true, "id": -1}
+{"user_id": 150, "name": "Patryk Jarmu\u0142a", "city": "Warszawa", "street": "aleja S\u0142oneczna 47/98", "favourite_genres": ["rock", "pop rock", "new wave"], "premium_user": true}
