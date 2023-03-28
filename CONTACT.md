@@ -106,6 +106,61 @@ Chcielibyśmy uzyskać także dane użytkowników nie premium, aby mieć porówn
 
 > "track_id": null
 
++-------+----------+--------+-------------+--------------------+                
+|user_id|session_id|track_id|   event_type|           timestamp|
++-------+----------+--------+-------------+--------------------+
+|    101|       124|        |ADVERTISEMENT|2022-04-19T10:19:...|
+|    103|       153|        |ADVERTISEMENT|2022-04-04T20:39:...|
+|    104|       165|        |ADVERTISEMENT|2022-05-22T22:47:...|
+|    107|       206|    null|ADVERTISEMENT|2022-04-18T08:02:...|
+|    108|       218|        |ADVERTISEMENT|2022-04-03T00:06:...|
+|    112|       274|        |ADVERTISEMENT|2022-07-08T07:06:...|
+|    117|       330|        |ADVERTISEMENT|2022-04-23T00:30:...|
+|    119|       358|        |ADVERTISEMENT|2022-04-03T02:51:...|
+|    119|       358|        |ADVERTISEMENT|2022-04-03T02:56:...|
+|    120|       375|        |ADVERTISEMENT|2022-04-26T07:11:...|
+|    122|       403|        |ADVERTISEMENT|2022-05-11T00:01:...|
+|    123|       419|        |ADVERTISEMENT|2022-12-14T22:49:...|
+|    125|       442|        |ADVERTISEMENT|2022-06-13T06:22:...|
+|   null|       444|        |ADVERTISEMENT|2022-07-10T19:36:...|
+|    126|       454|        |ADVERTISEMENT|2022-04-15T17:51:...|
+|    127|       466|        |ADVERTISEMENT|2023-01-05T17:04:...|
+|    129|       476|        |ADVERTISEMENT|2022-04-04T04:24:...|
+|    132|       515|        |ADVERTISEMENT|2022-06-22T06:30:...|
+|    133|       525|        |ADVERTISEMENT|2022-05-31T05:59:...|
+|    134|       543|        |ADVERTISEMENT|2022-06-17T18:21:...|
++-------+----------+--------+-------------+--------------------+
+
+
+I tak samo buy premium:
+
++-------+----------+--------+-----------+--------------------+                  
+|user_id|session_id|track_id| event_type|           timestamp|
++-------+----------+--------+-----------+--------------------+
+|   null|       124|        |BUY_PREMIUM|2022-04-19T10:19:...|
+|    102|       143|        |BUY_PREMIUM|2022-04-19T19:30:...|
+|    103|       153|        |BUY_PREMIUM|2022-04-04T20:39:...|
+|    104|       165|        |BUY_PREMIUM|2022-05-22T22:47:...|
+|    105|       172|    null|BUY_PREMIUM|2022-05-25T20:33:...|
+|    106|       185|        |BUY_PREMIUM|2022-03-29T15:42:...|
+|    107|       206|        |BUY_PREMIUM|2022-04-18T08:02:...|
+|    108|       218|        |BUY_PREMIUM|2022-04-03T00:07:...|
+|    109|       235|        |BUY_PREMIUM|2022-04-15T09:33:...|
+|    110|       250|        |BUY_PREMIUM|2022-05-15T23:19:...|
+|    111|       266|        |BUY_PREMIUM|2022-04-09T16:22:...|
+|    112|       274|        |BUY_PREMIUM|2022-07-08T07:07:...|
+|    113|       284|    null|BUY_PREMIUM|2022-08-18T12:55:...|
+|    114|       295|        |BUY_PREMIUM|2022-04-05T13:00:...|
+|    115|       312|        |BUY_PREMIUM|2022-06-27T13:49:...|
+|    116|       322|        |BUY_PREMIUM|2022-04-01T03:33:...|
+|    117|       330|        |BUY_PREMIUM|2022-04-23T00:31:...|
+|    118|       343|        |BUY_PREMIUM|2022-05-12T22:34:...|
+|    119|       358|        |BUY_PREMIUM|2022-04-03T02:56:...|
+|    120|       375|        |BUY_PREMIUM|2022-04-26T07:12:...|
++-------+----------+--------+-----------+--------------------+
+
+Szczególnie gdy event_type jest ustawione na ADVERTISEMENT.
+
 Generalnie jest mało danych:
 
 +-------------+------+
