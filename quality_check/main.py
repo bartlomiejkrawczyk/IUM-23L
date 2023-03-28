@@ -1,49 +1,7 @@
-# Import SparkSession
-from pyspark.sql import SparkSession
+from spark import createSession
+from config import VIEWS, NUMBER_COLUMNS, LIST_COLUMNS
 
-# Create SparkSession
-spark = SparkSession.builder \
-    .master("local[*]") \
-    .getOrCreate()
-
-VIEWS = {
-    'artists': "../data/v1/artists.jsonl",
-    'sessions': "../data/v1/sessions.jsonl",
-    'track_storage': "../data/v1/track_storage.jsonl",
-    'tracks': "../data/v1/tracks.jsonl",
-    'users': "../data/v1/users.jsonl",
-}
-
-NUMBER_COLUMNS = {
-    'artists': [],
-    'sessions': ['session_id',  'user_id'],  # timestamp
-    'track_storage': ['daily_cost'],
-    'tracks': [
-        'acousticness',
-        'danceability',
-        'duration_ms',
-        'energy',
-        'explicit',
-        'instrumentalness',
-        'key',
-        'liveness',
-        'loudness',
-        'popularity',
-        'speechiness',
-        'tempo',
-        'valence'
-    ],
-    'users': ['user_id'],
-}
-
-
-LIST_COLUMNS = {
-    'artists': ['genres'],
-    'sessions': [],
-    'track_storage': [],
-    'tracks': [],
-    'users': ['favourite_genres'],
-}
+spark = createSession()
 
 
 def register_views() -> None:
