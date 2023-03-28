@@ -3,8 +3,7 @@ from pyspark.sql import SparkSession
 
 # Create SparkSession
 spark = SparkSession.builder \
-    .master("local[1]") \
-    .appName("SparkByExamples.com") \
+    .master("local[*]") \
     .getOrCreate()
 
 VIEWS = {
@@ -19,7 +18,21 @@ NUMBER_COLUMNS = {
     'artists': [],
     'sessions': ['session_id',  'user_id'],  # timestamp
     'track_storage': ['daily_cost'],
-    'tracks': ['acousticness', 'danceability', 'duration_ms', 'energy', 'explicit', 'instrumentalness', 'key', 'liveness', 'loudness', 'popularity', 'speechiness', 'tempo', 'valence'],
+    'tracks': [
+        'acousticness',
+        'danceability',
+        'duration_ms',
+        'energy',
+        'explicit',
+        'instrumentalness',
+        'key',
+        'liveness',
+        'loudness',
+        'popularity',
+        'speechiness',
+        'tempo',
+        'valence'
+    ],
     'users': ['user_id'],
 }
 
@@ -32,52 +45,66 @@ LIST_COLUMNS = {
     'users': ['favourite_genres'],
 }
 
-for view, file in VIEWS.items():
-    df = spark.read.json(file)
-    df.createOrReplaceTempView(view)
 
-print('Users')
+def register_views() -> None:
+    for view, file in VIEWS.items():
+        df = spark.read.json(file)
+        df.createOrReplaceTempView(view)
 
 
-for view in VIEWS.keys():
-    print("=" * 120)
-    print(view)
-    dataframe = spark.sql(f"""--sql
+def analyze() -> None:
+    for view in VIEWS.keys():
+        print("=" * 120)
+        print(view)
+        analyze_view(view)
+
+
+def select_everything_from(view: str) -> str:
+    return f"""--sql
         SELECT 
             * 
         FROM {view}
-    """)
+    """
 
-    dataframe.show()
 
-    spark.sql(f"""--sql
+def select_count_everything_from(view: str) -> str:
+    return f"""--sql
         SELECT 
             COUNT(*) AS length
         FROM {view}
-    """).show()
+    """
+
+
+def analyze_view(view: str) -> None:
+    dataframe = spark.sql(select_everything_from(view))
+    dataframe.show()
+    spark.sql(select_count_everything_from(view)).show()
 
     for column in dataframe.columns:
-        print(column)
+        analyze_column(view, column)
 
-        spark.sql(f"""--sql
-            SELECT 
-                {column},
-                COUNT(*) AS length
-            FROM {view}
-            GROUP BY {column}
-            ORDER BY {column} NULLS FIRST
-        """).show()
 
-        spark.sql(f"""--sql
-            SELECT
-                COUNT(DISTINCT {column})
-            FROM {view}
-        """).show()
+def group_by_column(view: str, column: str) -> str:
+    return f"""--sql
+        SELECT 
+            {column},
+            COUNT(*) AS length
+        FROM {view}
+        GROUP BY {column}
+        ORDER BY {column} NULLS FIRST
+    """
 
-    for column in NUMBER_COLUMNS[view]:
-        print(column)
 
-        spark.sql(f"""--sql
+def count_distinct_values(view: str, column: str) -> str:
+    return f"""--sql
+        SELECT
+            COUNT(DISTINCT {column})
+        FROM {view}
+    """
+
+
+def aggregate_numeric_column(view: str, column: str) -> str:
+    return f"""--sql
             SELECT 
                 COUNT({column}) AS count,
                 MIN({column}) AS min,
@@ -93,24 +120,49 @@ for view in VIEWS.keys():
                 VAR_POP({column}) AS population_variance
             FROM {view}
             WHERE {column} IS NOT NULL
-        """).show()
+        """
 
-    for column in LIST_COLUMNS[view]:
-        print(column)
 
-        spark.sql(f"""--sql
+def explode_column(view: str, column: str) -> str:
+    return f"""--sql
             SELECT
                 DISTINCT EXPLODE({column}) AS {column}
             FROM {view}
             ORDER BY {column} NULLS FIRST
-        """).show()
+        """
 
-        spark.sql(f"""--sql
+
+def count_exploded_column(view: str, column: str) -> str:
+    exploded = f"""--sql
+        SELECT
+            DISTINCT EXPLODE({column}) AS {column}
+        FROM {view}
+    """
+
+    return f"""--sql
             SELECT
                 COUNT(*) AS length
-            FROM (
-                SELECT
-                    DISTINCT EXPLODE({column}) AS {column}
-                FROM {view}
-            )
-        """).show()
+            FROM ({exploded})
+        """
+
+
+def analyze_column(view: str, column: str) -> None:
+    print(column)
+    spark.sql(group_by_column(view, column)).show()
+    spark.sql(count_distinct_values(view, column)).show()
+
+    if column in NUMBER_COLUMNS[view]:
+        spark.sql(aggregate_numeric_column(view, column)).show()
+
+    if column in LIST_COLUMNS[view]:
+        spark.sql(explode_column(view, column)).show()
+        spark.sql(count_exploded_column(view, column)).show()
+
+
+def main() -> None:
+    register_views()
+    analyze()
+
+
+if __name__ == '__main__':
+    main()
