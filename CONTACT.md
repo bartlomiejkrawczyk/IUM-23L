@@ -54,6 +54,77 @@ Nie posiadamy takiego systemu
 
 Tak, możemy się tak umówić
 
+## Ocena danych v1 oraz odpowiedź klienta
+
+> 1. System obsługuje ok. 50 tyś. użytkowników, czy jesteśmy w ostanie otrzymać dane dotyczące wszystkich 50 tyś. Użytkowników oraz ich sesji, ponieważ otrzymaliśmy dane jedyne 50 użytkowników.
+
+Myślę, że jestem w stanie dać Państwu dostęp do danych ok. 20k użytkowników, czy taka ilość danych byłaby ok?
+
+> 2. W kolumanch znajduje się dużo identyfikatorów o "id": -1. Czym to jest spowodowane? Czy to jest problem w czasie wykonywania "dump-a" bazy danych? Czy może ten problem wynika z jakiegoś błędu w czasie zapisu do bazy i jest nie do uniknięcia?
+> 
+> 3. Podobnie w pliku sessions.jsonl jak mamy interpretować null w kolumnie "user_id". Czy to wynika z niekompletnych danych w bazie, czy może podobnie jak w pytaniu wyżej z trefnego "dump-a" bazy danych?
+> 
+> 4. Favourite_genres zawiera rekordy null, co to oznacza? Czy to oznacza, że użytkownik nie zdefiniował jeszcze ulubionych gatunków? Z czego to wynika? Może jest to stare konto? Albo błąd w czasie zapisu/odczytu?
+> 
+> 5. "premium_user" zawiera rekordy null. W tej kolumnie nie widzimy wartości false, a za to występują nulle. Chcielibyśmy uzyskać także dane użytkowników nie premium, aby mieć porównanie.
+> 
+> 6. 5 użytkowników ma pole o nazwie "id". Czy to pole o czymś świadczy? Czy może pozostało z jakiejś starej wersji systemu?
+> 
+> 7. W sessions, user_id oraz track_id są nullami, szczególnie gdy event_type jest ustawione na ADVERTISEMENT lub BUY_PREMIUM, co to oznacza?
+> 
+> 9. event_type zawiera rekordy null, co to oznacza?
+> 
+> 12. Czemu tylko 4 rekordy dla przypadku "FAST". Czy popsuł się wam szybki cache?
+> 
+> 13. W tracks, acousticness, danceability, speechiness, tempo, valence, energy są zerami, co to oznacza oraz dlaczego zerowe przypadki korelują ze sobą? Jeśli w jednej kolumnie jest 0.0 to w innych często też jest.
+> 14. W tracks kolumny id, id_artists zaeirają nulle, co to oznacza?
+
+Te błędy wkradły się w dane przy okazji łączenia danych z różnych systemów, mogę podesłać nową, poprawioną paczkę.
+
+> 8. W sessions jest mało danych oraz dodatkowo chcielibyśmy uzyskać więcej danych na temat ADVERTISEMENT i BUY_PREMIUM.
+
+Co to dokładnie znaczy "więcej danych"?
+
+> 10. timestamp jest krótki, czy możemy uzyskać dane z dłuższym zakresem?
+
+O jakim zakresie mówimy?
+
+> 11. Gdzie przechowujecie reklamy? Czy macie jakąś wydzieloną bazę danych?
+
+Reklamy są przechowywane w chmurze. Obawiam się, że nie możemy podzielić się ich treścią.
+
+> 15. Co oznacza kolumna key w tracks oraz instrumentalness, która jest 0 w bardzo dużej ilości przypadków?
+
+key: liczby w https://en.wikipedia.org/wiki/Pitch_class
+
+instrumentalness: przewidywanie czy utwór posiada wokal, im bliżej 1.0 tym wyższe prawdopodobieństwo, że utwór jest instrumentalny. Wartości powyżej 0.5 można traktować jak utwory instrumentalne
+
+> 16. Co oznacza loudness na minusie? Czy to jest wartość w decybelach?
+
+średnia głośność w decybelach, typowo od -60 do 0dB
+
+> 17. Czy mamy przewidywać czy dany użytkownik kupi konto premium? Czy może określić, cechy które sygnalizują, że użytkownik chce kupić takie konto?
+> 
+> 18. Czy docelowy system ma wskazywać na to z czego wynika zakup konta premium na podstawie danych? Czy raczej API powinno przewidywać czy dany użytkownik jest skłonny do zakupu takiego konta?
+
+Chodzi tu raczej o przewidzenie czy dany użytownik jest skłonny do zakupu takiego konta
+
+> 19. W jaki sposób Państwo chcą wykorzystać przygotowane przez nas API? Czy my mamy ustalić format danych przyjmowanych / odsyłanych przez nasze api? Czy jest jakiś narzucony z góry?
+
+Możecie Państwo sami ustalić format danych przyjmowanych/odsyłanych
+
+> 20. Czy mają Państwo jakieś wymagania niefunkcjonalne co do API? Czy mamy zapewnić bezpieczeństwo (HTTPS)? Czas odpowiedzi? Maksymalna przepustowość? Ograniczenia na zużycie zasobów? Czy mamy jakąś narzuconą technologię? Pyton? Java?
+
+Nie, nie mamy takich wymagań
+
+> 21. Jak bardzo mamy się skupiać na wyjaśnieniu predykcji naszego modelu? Czy mamy jedynie określić przynależność danego użytkownika? Czy raczej ustalić dlaczego wybraliśmy tak, a nie inaczej?
+
+Na początek wystarczy jedynie określenie przynależności danego użytkownika
+
+> 22. W jaki sposób system będzie wykorzystywany? W jaki sposób będzie testowany?
+
+Zgodnie z oczekiwaniami, jeśli chodzi o testy to może Państwo coś zaproponujecie
+
 
 ## Ocena danych
 
