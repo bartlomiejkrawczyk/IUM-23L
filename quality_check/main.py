@@ -49,7 +49,7 @@ def group_by_column(view: str, column: str) -> str:
             COUNT(*) AS length
         FROM {view}
         GROUP BY {column}
-        ORDER BY {column} NULLS FIRST
+        ORDER BY {column} IS NULL, length DESC, {column} NULLS FIRST
     """
 
 
@@ -69,7 +69,7 @@ def aggregate_numeric_column(view: str, column: str) -> str:
                 MAX({column}) AS max,
                 AVG({column}) AS average,
                 SUM({column}) AS sum,
-                SUM(DISTINCT {column}) AS sum,
+                SUM(DISTINCT {column}) AS sumDistinct,
                 KURTOSIS({column}) AS kurtosis,
                 SKEWNESS({column}) AS skewness,
                 STDDEV({column}) AS standard_deviation,
