@@ -126,7 +126,7 @@ Na początek wystarczy jedynie określenie przynależności danego użytkownika
 Zgodnie z oczekiwaniami, jeśli chodzi o testy to może Państwo coś zaproponujecie
 
 
-## Ocena danych
+## Ocena danych v1
 
 
 >> Jak duży jest państwa system? Ilu użytkowników korzysta z niego?
@@ -387,4 +387,34 @@ W jaki sposób system będzie wykorzystywany? W jaki sposób będzie testowany?
 Rozumiemy, że w naszym rozwiązaniu mamy się skupić na **transparentność/zdolność wyjaśniania predykcji/ruch XAI (eXplainable AI),**
 
 
+# Ocena danych v2
+
+`release_date` jest czasami datą w formacie YYYY-MM-DD, a czasami YYYY
+
+release_date
+
++------------+------+
+|release_date|length|
++------------+------+
+|  1998-01-01|   750|
+|  1997-01-01|   738|
+|        1998|   720|
+|        1995|   718|
+|        1996|   692|
+|        1980|   688|
+|        1997|   680|
+|  1990-01-01|   665|
+|  1996-01-01|   659|
+|  1991-01-01|   657|
+|        1994|   652|
+|  1995-01-01|   631|
+|        1983|   630|
+|        1990|   621|
+|  1994-01-01|   616|
+|        1984|   613|
+|        1985|   612|
+|        1989|   603|
+|  1992-01-01|   599|
+|        1981|   597|
++------------+------+
 
