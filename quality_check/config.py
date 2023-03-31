@@ -1,10 +1,12 @@
+VERSION = 'v2'
+
 
 VIEWS = {
-    'artists': "../data/v1/artists.jsonl",
-    'sessions': "../data/v1/sessions.jsonl",
-    'track_storage': "../data/v1/track_storage.jsonl",
-    'tracks': "../data/v1/tracks.jsonl",
-    'users': "../data/v1/users.jsonl",
+    'artists': f"../data/{VERSION}/artists.jsonl",
+    'sessions': f"../data/{VERSION}/sessions.jsonl",
+    'track_storage': f"../data/{VERSION}/track_storage.jsonl",
+    'tracks': f"../data/{VERSION}/tracks.jsonl",
+    'users': f"../data/{VERSION}/users.jsonl",
 }
 
 NUMBER_COLUMNS = {
