@@ -1,13 +1,19 @@
+from typing import Dict
+
 VERSION = 'v2'
 
 
-VIEWS = {
-    'artists': f"../data/{VERSION}/artists.jsonl",
-    'sessions': f"../data/{VERSION}/sessions.jsonl",
-    'track_storage': f"../data/{VERSION}/track_storage.jsonl",
-    'tracks': f"../data/{VERSION}/tracks.jsonl",
-    'users': f"../data/{VERSION}/users.jsonl",
-}
+def views(version: str) -> Dict[str, str]:
+    return {
+        'artists': f"../data/{version}/artists.jsonl",
+        'sessions': f"../data/{version}/sessions.jsonl",
+        'track_storage': f"../data/{version}/track_storage.jsonl",
+        'tracks': f"../data/{version}/tracks.jsonl",
+        'users': f"../data/{version}/users.jsonl",
+    }
+
+
+VIEWS = views(VERSION)
 
 NUMBER_COLUMNS = {
     'artists': [],
