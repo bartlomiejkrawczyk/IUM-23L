@@ -52,7 +52,6 @@ grouped_session = f"""--sql
         CAST(MAX(timestamp) AS long) - CAST(MIN(timestamp) AS long) AS session_duration
     FROM ({sessions})
     GROUP BY user_id, session_id
-    ORDER BY session_duration DESC
 """
 
 
@@ -69,12 +68,12 @@ tracks_1 = f"""--sql
     SELECT
         t.id AS track_id,
         t.id_artist AS artist_id,
-        t.popularity AS popularity,
         t.release_date_s AS release_date_s,
         CAST(t.release_date_s AS timestamp) AS release_date,
         t.duration_ms AS duration_ms,
 
         t.explicit == 1 AS explicit,
+        t.explicit AS explicit_numerical,
         
         t.key AS key,
         t.popularity AS popularity,
@@ -106,10 +105,44 @@ tracks = f"""--sql
     FROM ({tracks_1})
 """
 
+# I could add here avg, median, min, max, standard variation itp. itd.
 artists_tracks = f"""--sql
+    SELECT
+        artist_id,
+        genres,
+        number_of_genres,
+        COLLECT_LIST(track_id) AS artist_track_ids,
+        COUNT(track_id) AS number_of_tracks,
+        AVG(duration_ms) AS average_duration,
 
+        CAST(MIN(release_date_s) AS timestamp) AS career_start,
+        CAST(AVG(release_date_s) AS timestamp) AS average_release_date,
+        CAST(MAX(release_date_s) AS timestamp) AS career_end,
+        MAX(release_date_s) - MIN(release_date_s) AS career_duration_s,
+
+        AVG(explicit_numerical) AS explicit_songs_ratio,
+        AVG(popularity) AS average_popularity,
+        AVG(acousticness) AS average_acousticness,
+        AVG(danceability) AS average_danceability,
+        AVG(energy) AS average_energy,
+        AVG(instrumentalness) AS average_instrumentalness,
+        AVG(liveness) AS average_liveness,
+        AVG(loudness) AS average_loudness,
+        AVG(speechiness) AS average_speechiness,
+        AVG(tempo) AS average_tempo,
+        AVG(valence) AS average_valence,
+
+        AVG(track_name_length) AS average_track_name_length,
+
+        AVG(daily_cost) AS average_daily_cost,
+
+        COUNT_IF(storage_class == 'FAST') AS number_of_fast_storage_used,
+        COUNT_IF(storage_class == 'FAST') AS number_of_fast_storage_used,
+    FROM ({artists})
+    INNER JOIN ({tracks}) USING (artist_id)
+    GROUP BY artist_id, genres, number_of_genres
 """
 
-result = grouped_session
+result = artists_tracks
 
 spark.sql(result).show()
