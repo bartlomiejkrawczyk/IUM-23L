@@ -542,18 +542,9 @@ release_date
 1        MEDIUM    1275
 2          FAST       4
 
-2. Mała reprezentatywność sessions.event_type - BUY_PREMIUM
+2. W tabeli artyści zdefiniowanych jest 3912 unikalnych gatunków muzyki, a wśród udostępnionych użytkowników występuje jedynie 50 z tych gatunków. Z czego wynika taka rozbieżność? Czy udostępnią nam państwo dane, użytkowników, których ulubionymi gatunkami są inne gatunki muzyki?
 
-      event_type   length
-0           PLAY  5618760
-1           SKIP  1672489
-2           LIKE  1612195
-3  ADVERTISEMENT  1279933
-4    BUY_PREMIUM     8385
-
-3. W tabeli artyści zdefiniowanych jest 3912 unikalnych gatunków muzyki, a wśród udostępnionych użytkowników występuje jedynie 50 z tych gatunków. Z czego wynika taka rozbieżność? Czy udostępnią nam państwo dane, użytkowników, których ulubionymi gatunkami są inne gatunki muzyki?
-
-4. Czemu użytkownicy jedynie największych miast w polsce?
+3. Czemu użytkownicy jedynie największych miast w polsce?
 
   | city     | length
 --|----------|-------
@@ -565,7 +556,7 @@ release_date
 5 | Szczecin | 2820
 6 | Poznań   | 2804
 
-5. Czemu 118940 utworów muzycznych nigdy nie było odsłuchane? - track_id 118940 rekordów z tracks nie występuje ani razu w sessions
+4. Czemu 118940 utworów muzycznych nigdy nie było odsłuchane? - track_id 118940 rekordów z tracks nie występuje ani razu w sessions
 
 
 ### Jakość
