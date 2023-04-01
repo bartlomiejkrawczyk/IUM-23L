@@ -491,8 +491,6 @@ Rozumiemy, że w naszym rozwiązaniu mamy się skupić na **transparentność/zd
 
 1. Rozumiem, że pozwalacie założyć konta artystom o tej samej nazwie?
 
-TODO:
-
 2. Czy posiadacie jakieś ograniczenie na długość dostępnych utworów? Czy utwory o długości ok 1,5 h także dostępne są w waszej ofercie?
 
 3. `instrumentalness` równe 0.0 w 46190 przypadków
@@ -530,9 +528,9 @@ release_date
 
 7. `tempo` równe 0.0 w 48 przypadkach
 
-8. W tabeli artyści zdefiniowanych jest 3912 unikalnych gatunków muzyki, a wśród udostępnionych użytkowników występuje jedynie 50 z tych gatunków. Z czego wynika taka rozbieżność? Czy udostępnią nam państwo dane, użytkowników, których ulubionymi gatunkami są inne gatunki muzyki?
+8. Czy mamy założyć, że jeśli dany artysta tworzy muzykę w danym gatunku, to jego wszystkie utwory należą do tych samych gatunków? Czy może mają państwo dostępną dodatkową kolumnę w utworach, która symbolizuje gatunek utworu?
 
-9. Czy mamy założyć, że jeśli dany artysta tworzy muzykę w danym gatunku, to jego wszystkie utwory należą do tych samych gatunków? Czy może mają państwo dostępną dodatkową kolumnę w utworach, która symbolizuje gatunek utworu?
+9. Rozumiem, że track_id = '' w przypadku reklam (1288318 przypadków) oznacza, że reklama pochodzi z chmury i nie mamy informacji o tej reklamie.
 
 
 ### Reprezentatywność
@@ -544,10 +542,37 @@ release_date
 1        MEDIUM    1275
 2          FAST       4
 
+2. Mała reprezentatywność sessions.event_type - BUY_PREMIUM
+
+      event_type   length
+0           PLAY  5618760
+1           SKIP  1672489
+2           LIKE  1612195
+3  ADVERTISEMENT  1279933
+4    BUY_PREMIUM     8385
+
+3. W tabeli artyści zdefiniowanych jest 3912 unikalnych gatunków muzyki, a wśród udostępnionych użytkowników występuje jedynie 50 z tych gatunków. Z czego wynika taka rozbieżność? Czy udostępnią nam państwo dane, użytkowników, których ulubionymi gatunkami są inne gatunki muzyki?
+
+4. Czemu użytkownicy jedynie największych miast w polsce?
+
+  | city     | length
+--|----------|-------
+0 | Kraków   | 2924
+1 | Wrocław  | 2880
+2 | Gdynia   | 2864
+3 | Radom    | 2861
+4 | Warszawa | 2847
+5 | Szczecin | 2820
+6 | Poznań   | 2804
+
+5. Czemu 118940 utworów muzycznych nigdy nie było odsłuchane? - track_id 118940 rekordów z tracks nie występuje ani razu w sessions
+
 
 ### Jakość
 
 
 ### Ilość
+
+Wydaje się wystarczająca
 
 
