@@ -126,6 +126,11 @@ Na początek wystarczy jedynie określenie przynależności danego użytkownika
 Zgodnie z oczekiwaniami, jeśli chodzi o testy to może Państwo coś zaproponujecie
 
 
+# Ocena danych v2 oraz odpowiedź klienta
+
+
+
+
 ## Ocena danych v1
 
 
@@ -389,32 +394,160 @@ Rozumiemy, że w naszym rozwiązaniu mamy się skupić na **transparentność/zd
 
 # Ocena danych v2
 
-`release_date` jest czasami datą w formacie YYYY-MM-DD, a czasami YYYY
+## Dane v1 - kolumny
+
+**Artists**
+- GENRES - array<string>
+- ID - string
+- NAME - string
+
+**Sessions** 
+- EVENT_TYPE - string
+- SESSION_ID - bigint
+- TIMESTAMP - string
+- TRACK_ID - string
+- USER_ID - bigint
+
+**Track Storage**
+- DAILY_COST - double
+- STORAGE_CLASS - string
+- TRACK_ID - string
+
+**Tracks**
+- ACOUSTICNESS - double
+- DANCEABILITY - double
+- DURATION_MS - bigint
+- ENERGY - double
+- EXPLICIT - bigint
+- ID - string
+- ID_ARTIST - string
+- INSTRUMENTALNESS - double
+- KEY - bigint
+- LIVENESS - double
+- LOUDNESS - double
+- NAME - string
+- POPULARITY - bigint
+- RELEASE_DATE - string
+- SPEECHINESS - double
+- TEMPO - double
+- VALENCE - double
+
+**Users**
+- CITY - string
+- FAVOURITE_GENRES - array<string>
+- ID - bigint
+- NAME - string
+- PREMIUM_USER - int
+- STREET - string
+- USER_ID - bigint
+
+## Dane v2 - kolumny
+
+**Artists**
+- GENRES - array<string>
+- ID - string
+- NAME - string
+
+**Sessions**
+- EVENT_TYPE - string
+- SESSION_ID - bigint
+- TIMESTAMP - string
+- TRACK_ID - string
+- USER_ID - bigint
+
+**Track Storage**
+- DAILY_COST - double
+- STORAGE_CLASS - string
+- TRACK_ID - string
+
+**Tracks**
+- ACOUSTICNESS - double
+- DANCEABILITY - double
+- DURATION_MS - bigint
+- ENERGY - double
+- EXPLICIT - bigint
+- ID - string
+- ID_ARTIST - string
+- INSTRUMENTALNESS - double
+- KEY - bigint
+- LIVENESS - double
+- LOUDNESS - double
+- NAME - string
+- POPULARITY - bigint
+- RELEASE_DATE - string
+- SPEECHINESS - double
+- TEMPO - double
+- VALENCE - double
+
+**Users**
+- CITY - string
+- FAVOURITE_GENRES - array<string>
+- NAME - string
+- PREMIUM_USER - int
+- STREET - string
+- USER_ID - bigint
+
+### Ogólne uwagi
+
+1. Rozumiem, że pozwalacie założyć konta artystom o tej samej nazwie?
+
+TODO:
+
+2. Czy posiadacie jakieś ograniczenie na długość dostępnych utworów? Czy utwory o długości ok 1,5 h także dostępne są w waszej ofercie?
+
+3. `instrumentalness` równe 0.0 w 46190 przypadków
+
+4. `loudness` o wartościach dodatnich
+
+5. Rozumiem, że pozwalacie dodać piosenki o takiej samej nazwie?
+
+6. `release_date` jest czasami datą w formacie YYYY-MM-DD, a czasami YYYY? Jak mamy to interpretować?
 
 release_date
 
-+------------+------+
-|release_date|length|
-+------------+------+
-|  1998-01-01|   750|
-|  1997-01-01|   738|
-|        1998|   720|
-|        1995|   718|
-|        1996|   692|
-|        1980|   688|
-|        1997|   680|
-|  1990-01-01|   665|
-|  1996-01-01|   659|
-|  1991-01-01|   657|
-|        1994|   652|
-|  1995-01-01|   631|
-|        1983|   630|
-|        1990|   621|
-|  1994-01-01|   616|
-|        1984|   613|
-|        1985|   612|
-|        1989|   603|
-|  1992-01-01|   599|
-|        1981|   597|
-+------------+------+
+| release_date | length |
+|--------------|--------|
+| 1998-01-01   | 750    |
+| 1997-01-01   | 738    |
+| 1998         | 720    |
+| 1995         | 718    |
+| 1996         | 692    |
+| 1980         | 688    |
+| 1997         | 680    |
+| 1990-01-01   | 665    |
+| 1996-01-01   | 659    |
+| 1991-01-01   | 657    |
+| 1994         | 652    |
+| 1995-01-01   | 631    |
+| 1983         | 630    |
+| 1990         | 621    |
+| 1994-01-01   | 616    |
+| 1984         | 613    |
+| 1985         | 612    |
+| 1989         | 603    |
+| 1992-01-01   | 599    |
+| 1981         | 597    |
+
+7. `tempo` równe 0.0 w 48 przypadkach
+
+8. W tabeli artyści zdefiniowanych jest 3912 unikalnych gatunków muzyki, a wśród udostępnionych użytkowników występuje jedynie 50 z tych gatunków. Z czego wynika taka rozbieżność? Czy udostępnią nam państwo dane, użytkowników, których ulubionymi gatunkami są inne gatunki muzyki?
+
+9. Czy mamy założyć, że jeśli dany artysta tworzy muzykę w danym gatunku, to jego wszystkie utwory należą do tych samych gatunków? Czy może mają państwo dostępną dodatkową kolumnę w utworach, która symbolizuje gatunek utworu?
+
+
+### Reprezentatywność
+
+1. Mała reprezentatywność track_storage.storage_class - FAST:
+
+  storage_class  length
+0          SLOW  128369
+1        MEDIUM    1275
+2          FAST       4
+
+
+### Jakość
+
+
+### Ilość
+
 
