@@ -3,6 +3,14 @@ from pyspark.sql import SparkSession
 
 
 def createSession() -> SparkSession:
-    return SparkSession.builder \
+    spark = SparkSession.builder \
         .master("local[*]") \
         .getOrCreate()
+
+    spark.conf.set("spark.sql.execution.arrow.pyspark.enabled", "true")
+    spark.conf.set("spark.sql.execution.arrow.enabled", "true")
+    spark.conf.set(
+        "spark.sql.execution.arrow.pyspark.fallback.enabled", "true"
+    )
+    spark.sparkContext.setLogLevel("ERROR")
+    return spark
