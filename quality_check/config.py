@@ -1,7 +1,5 @@
 from typing import Dict
 
-VERSION = 'v2'
-
 
 def views(version: str) -> Dict[str, str]:
     return {
@@ -12,8 +10,6 @@ def views(version: str) -> Dict[str, str]:
         'users': f"../data/{version}/users.jsonl",
     }
 
-
-VIEWS = views(VERSION)
 
 NUMBER_COLUMNS = {
     'artists': [],
