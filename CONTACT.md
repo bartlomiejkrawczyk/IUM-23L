@@ -491,11 +491,11 @@ Rozumiemy, że w naszym rozwiązaniu mamy się skupić na **transparentność/zd
 
 1. Rozumiem, że pozwalacie założyć konta artystom o tej samej nazwie?
 
-2. Czy posiadacie jakieś ograniczenie na długość dostępnych utworów? Czy utwory o długości ok 1,5 h także dostępne są w waszej ofercie?
+2. Czy posiadacie jakieś ograniczenie na długość dostępnych utworów? Czy utwory o długości ok 1,5 h także dostępne są w waszej ofercie? Większośc piosenek jest poniżej 17 minut.
 
 3. `instrumentalness` równe 0.0 w 46190 przypadków
 
-4. `loudness` o wartościach dodatnich
+4. `loudness` o wartościach dodatnich -60 - 0, -60 ; 4,8
 
 5. Rozumiem, że pozwalacie dodać piosenki o takiej samej nazwie?
 
@@ -528,9 +528,19 @@ release_date
 
 7. `tempo` równe 0.0 w 48 przypadkach
 
+8. w `popularity` występuje pik w 0.0? Czy to dobrze?
+
 8. Czy mamy założyć, że jeśli dany artysta tworzy muzykę w danym gatunku, to jego wszystkie utwory należą do tych samych gatunków? Czy może mają państwo dostępną dodatkową kolumnę w utworach, która symbolizuje gatunek utworu?
 
 9. Rozumiem, że track_id = '' w przypadku reklam (1288318 przypadków) oznacza, że reklama pochodzi z chmury i nie mamy informacji o tej reklamie.
+
+10. Czy BUY_PREMIUM jest dożywotnie?
+
+11. Czy polubienie piosenki jest dożywotnie? Czy nie da się przestać lubić piosenkę? Czy da się polubić piosenkę wiele razy?
+
+12. daily_cost, z czego wynika duży koszt utrzymania niektórych piosenek. Dzienny koszt utrzymania większości piosenek mieści się w 0.05, a niektóre piosenki osiągają nawet 0.25
+
+13. Jak stare utwory utrzymujecie na platformie?
 
 
 ### Reprezentatywność
