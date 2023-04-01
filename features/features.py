@@ -1,4 +1,5 @@
 from spark import createSession
+from matplotlib import pyplot as plt
 
 spark = createSession()
 
@@ -204,6 +205,68 @@ user_liked_tracks = f"""--sql
     GROUP BY user_id, track_id
 """
 
-result = user_liked_tracks
+non_premium_sessions_event_ratio = f"""--sql
+    SELECT
+        year,
+        month,
+        CONCAT(CAST(year AS string), '-', CAST(month AS string)) AS date,
 
-spark.sql(result).show()
+        COUNT_IF(event_type == 'PLAY') AS play_number,
+        COUNT_IF(event_type == 'SKIP') AS skip_number,
+        COUNT_IF(event_type == 'LIKE') AS like_number,
+        COUNT_IF(event_type == 'ADVERTISEMENT') AS advertisement_number
+    FROM ({non_premium_sessions})
+    GROUP BY year, month
+    ORDER BY year, month
+"""
+
+
+premium_sessions_event_ratio = f"""--sql
+    SELECT
+        year,
+        month,
+        CONCAT(CAST(year AS string), '-', CAST(month AS string)) AS date,
+
+        COUNT_IF(event_type == 'PLAY') AS play_number,
+        COUNT_IF(event_type == 'SKIP') AS skip_number,
+        COUNT_IF(event_type == 'LIKE') AS like_number,
+        COUNT_IF(event_type == 'ADVERTISEMENT') AS advertisement_number
+    FROM ({premium_sessions})
+    GROUP BY year, month
+    ORDER BY year, month
+"""
+
+
+def non_premium_vs_premium_plot():
+    columns = ['play_number', 'skip_number',
+               'like_number', 'advertisement_number']
+    _, axs = plt.subplots(1, 2, figsize=(24, 6), sharey=True)
+
+    spark.sql(non_premium_sessions_event_ratio) \
+        .toPandas() \
+        .plot \
+        .bar(x='date', y=columns, ax=axs[0])  # type: ignore
+
+    axs[0].set_title('non-premium')
+
+    spark.sql(premium_sessions_event_ratio) \
+        .toPandas() \
+        .plot \
+        .bar(x='date', y=columns, ax=axs[1])  # type: ignore
+
+    axs[1].set_title('premium')
+
+    plt.show()
+
+
+positive_loudness_tracks = f"""--sql
+    SELECT
+        COUNT(*)
+    FROM tracks
+    WHERE loudness > 0
+"""
+
+result = non_premium_sessions_event_ratio
+
+# spark.sql(result).show()
+non_premium_vs_premium_plot()
