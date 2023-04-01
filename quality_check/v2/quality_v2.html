@@ -14601,7 +14601,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="n">views</span>
 <span class="kn">from</span> <span class="nn">spark</span> <span class="kn">import</span> <span class="n">createSession</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="kn">from</span> <span class="nn">pyspark.sql.dataframe</span> <span class="kn">import</span> <span class="n">DataFrame</span>
@@ -14667,17 +14667,17 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">VERSION</span> <span class="o">=</span> <span class="s1">&#39;v2&#39;</span>
 
-<span class="n">views</span> <span class="o">=</span> <span class="n">views</span><span class="p">(</span><span class="n">VERSION</span><span class="p">)</span>
+<span class="n">VIEWS</span> <span class="o">=</span> <span class="n">views</span><span class="p">(</span><span class="n">VERSION</span><span class="p">)</span>
 <span class="n">spark</span> <span class="o">=</span> <span class="n">createSession</span><span class="p">()</span>
 
-<span class="k">for</span> <span class="n">view</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">views</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<span class="k">for</span> <span class="n">view</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">VIEWS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">get_columns_of_type</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s1">&#39;boolean&#39;</span><span class="p">):</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="n">column</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">column</span><span class="p">)</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">IntegerType</span><span class="p">()))</span>
     
     <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">column</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">,</span> <span class="s1">&#39;release_date&#39;</span><span class="p">]:</span>
-            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s1">_s&#39;</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">unix_timestamp</span><span class="p">(</span><span class="n">column</span><span class="p">,</span> <span class="s2">&quot;yyyy[-MM-dd[&#39;T&#39;HH:mm:ss[.SSSSSS]]]&quot;</span><span class="p">))</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s1">_s&#39;</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">unix_timestamp</span><span class="p">(</span><span class="n">column</span><span class="p">,</span> <span class="s2">&quot;yyyy[-MM[-dd[[&#39;T&#39;][&#39; &#39;]HH:mm[:ss[.SSSSSS]]]]]&quot;</span><span class="p">))</span>
 
     <span class="n">df</span><span class="o">.</span><span class="n">createOrReplaceTempView</span><span class="p">(</span><span class="n">view</span><span class="p">)</span>
 </pre></div>
@@ -14693,6 +14693,48 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
+<pre>your 131072x1 screen size is bogus. expect trouble
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>23/04/01 21:45:20 WARN Utils: Your hostname, LAPTOP-7KCON786 resolves to a loopback address: 127.0.1.1; using 192.168.18.206 instead (on interface eth0)
+23/04/01 21:45:20 WARN Utils: Set SPARK_LOCAL_IP if you need to bind to another address
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
+<pre>Setting default log level to &#34;WARN&#34;.
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>23/04/01 21:45:21 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+</pre>
+</div>
+</div>
 <div class="jp-OutputArea-child">
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
@@ -14715,7 +14757,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">DATA_FRAMES</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">views</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="p">[</span><span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SELECT * FROM </span><span class="si">{</span><span class="n">view</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">view</span> <span class="ow">in</span> <span class="n">views</span><span class="o">.</span><span class="n">keys</span><span class="p">()]))</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">DATA_FRAMES</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">VIEWS</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="p">[</span><span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SELECT * FROM </span><span class="si">{</span><span class="n">view</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">view</span> <span class="ow">in</span> <span class="n">VIEWS</span><span class="o">.</span><span class="n">keys</span><span class="p">()]))</span>
 </pre></div>
 
      </div>
@@ -14768,6 +14810,15 @@ GENRES - array&lt;string&gt;
 ID - string
 NAME - string
 </pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
+<pre>                                                                                </pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
@@ -14890,6 +14941,15 @@ TRACK_ID - string
 USER_ID - bigint
 TIMESTAMP_S - bigint
 </pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
+<pre>                                                                                </pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
@@ -15186,6 +15246,15 @@ RELEASE_DATE_S - bigint
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
+<pre>                                                                                </pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
 
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
 <div>
@@ -15246,7 +15315,7 @@ RELEASE_DATE_S - bigint
       <td>0.8920</td>
       <td>51.496</td>
       <td>0.557</td>
-      <td>-4.121640e+07</td>
+      <td>-41216400</td>
     </tr>
     <tr>
       <th>1</th>
@@ -15267,7 +15336,7 @@ RELEASE_DATE_S - bigint
       <td>0.0235</td>
       <td>96.181</td>
       <td>0.327</td>
-      <td>1.388531e+09</td>
+      <td>1388530800</td>
     </tr>
     <tr>
       <th>2</th>
@@ -15288,7 +15357,7 @@ RELEASE_DATE_S - bigint
       <td>0.0319</td>
       <td>74.071</td>
       <td>0.255</td>
-      <td>-6.311556e+08</td>
+      <td>-631155600</td>
     </tr>
     <tr>
       <th>3</th>
@@ -15309,7 +15378,7 @@ RELEASE_DATE_S - bigint
       <td>0.2590</td>
       <td>108.024</td>
       <td>0.866</td>
-      <td>8.836092e+08</td>
+      <td>883609200</td>
     </tr>
     <tr>
       <th>4</th>
@@ -15330,7 +15399,7 @@ RELEASE_DATE_S - bigint
       <td>0.0658</td>
       <td>128.051</td>
       <td>0.580</td>
-      <td>1.420067e+09</td>
+      <td>1420066800</td>
     </tr>
     <tr>
       <th>...</th>
@@ -15372,7 +15441,7 @@ RELEASE_DATE_S - bigint
       <td>0.0656</td>
       <td>117.094</td>
       <td>0.461</td>
-      <td>1.563487e+09</td>
+      <td>1563487200</td>
     </tr>
     <tr>
       <th>99996</th>
@@ -15393,7 +15462,7 @@ RELEASE_DATE_S - bigint
       <td>0.0379</td>
       <td>105.682</td>
       <td>0.677</td>
-      <td>2.524572e+08</td>
+      <td>252457200</td>
     </tr>
     <tr>
       <th>99997</th>
@@ -15414,7 +15483,7 @@ RELEASE_DATE_S - bigint
       <td>0.3030</td>
       <td>82.911</td>
       <td>0.832</td>
-      <td>6.311484e+08</td>
+      <td>631148400</td>
     </tr>
     <tr>
       <th>99998</th>
@@ -15435,7 +15504,7 @@ RELEASE_DATE_S - bigint
       <td>0.0381</td>
       <td>128.364</td>
       <td>0.314</td>
-      <td>-7.573860e+08</td>
+      <td>-757386000</td>
     </tr>
     <tr>
       <th>99999</th>
@@ -15456,7 +15525,7 @@ RELEASE_DATE_S - bigint
       <td>0.2010</td>
       <td>82.549</td>
       <td>0.671</td>
-      <td>1.041376e+09</td>
+      <td>1041375600</td>
     </tr>
   </tbody>
 </table>
@@ -15682,6 +15751,15 @@ USER_ID - bigint
 ================================================================================
 GENRES
 </pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
+<pre>                                                                                </pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
@@ -16403,40 +16481,6 @@ EVENT_TYPE
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>[Stage 4707:&gt;                                                      (0 + 8) / 11]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>23/04/01 13:24:53 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:24:53 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:24:53 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:24:53 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:24:53 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:24:53 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:24:53 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:24:53 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:24:54 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:24:54 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:24:54 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:24:54 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:24:54 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:24:54 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:24:54 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:24:54 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
 <pre>                                                                                </pre>
 </div>
 </div>
@@ -16905,32 +16949,6 @@ EVENT_TYPE
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
 <pre>TIMESTAMP_S
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>[Stage 4734:&gt;                                                      (0 + 8) / 11]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>23/04/01 13:26:24 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:26:24 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:26:24 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:26:24 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:26:24 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:26:24 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:26:24 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:26:25 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
 </pre>
 </div>
 </div>
@@ -17761,6 +17779,15 @@ ACOUSTICNESS
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
 <pre>DURATION_MS
 </pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
+<pre>                                                                                </pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
@@ -19868,28 +19895,28 @@ ACOUSTICNESS
   <tbody>
     <tr>
       <th>0</th>
-      <td>NaN</td>
-      <td>618</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>8.836092e+08</td>
+      <td>883609200</td>
       <td>1470</td>
     </tr>
     <tr>
-      <th>2</th>
-      <td>8.520732e+08</td>
+      <th>1</th>
+      <td>852073200</td>
       <td>1418</td>
     </tr>
     <tr>
-      <th>3</th>
-      <td>8.204508e+08</td>
+      <th>2</th>
+      <td>820450800</td>
       <td>1351</td>
     </tr>
     <tr>
-      <th>4</th>
-      <td>7.889148e+08</td>
+      <th>3</th>
+      <td>788914800</td>
       <td>1349</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>631148400</td>
+      <td>1288</td>
     </tr>
     <tr>
       <th>...</th>
@@ -19897,33 +19924,33 @@ ACOUSTICNESS
       <td>...</td>
     </tr>
     <tr>
-      <th>14673</th>
-      <td>1.616454e+09</td>
+      <th>14678</th>
+      <td>1616454000</td>
       <td>1</td>
     </tr>
     <tr>
-      <th>14674</th>
-      <td>1.616800e+09</td>
+      <th>14679</th>
+      <td>1616799600</td>
       <td>1</td>
     </tr>
     <tr>
-      <th>14675</th>
-      <td>1.616886e+09</td>
+      <th>14680</th>
+      <td>1616886000</td>
       <td>1</td>
     </tr>
     <tr>
-      <th>14676</th>
-      <td>1.617401e+09</td>
+      <th>14681</th>
+      <td>1617400800</td>
       <td>1</td>
     </tr>
     <tr>
-      <th>14677</th>
-      <td>1.617487e+09</td>
+      <th>14682</th>
+      <td>1617487200</td>
       <td>1</td>
     </tr>
   </tbody>
 </table>
-<p>14678 rows × 2 columns</p>
+<p>14683 rows × 2 columns</p>
 </div>
 </div>
 
@@ -19959,7 +19986,7 @@ ACOUSTICNESS
   <tbody>
     <tr>
       <th>0</th>
-      <td>14677</td>
+      <td>14683</td>
     </tr>
   </tbody>
 </table>
@@ -21040,228 +21067,6 @@ class="
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>[Stage 5000:&gt;                                                      (0 + 8) / 11]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>23/04/01 13:30:44 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:30:44 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:30:44 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:30:44 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:30:44 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:30:44 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:30:44 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:30:44 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:30:44 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:30:44 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:30:45 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:30:45 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:30:45 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:30:45 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:30:45 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:30:45 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:30:52 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:30:52 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:30:52 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:30:52 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:30:52 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:30:52 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:30:52 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:30:52 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:30:53 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:30:53 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:30:53 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:30:53 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:30:53 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:30:53 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:30:53 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:30:53 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:00 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:00 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:01 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:01 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:01 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:01 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:01 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:01 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:02 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:02 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:02 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:02 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:02 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:02 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:02 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:02 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:08 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:08 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:09 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:09 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:09 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:09 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:09 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:09 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:09 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:09 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:10 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:10 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:10 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:10 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:13 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:13 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>[Stage 5000:========================================&gt;              (8 + 3) / 11]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>23/04/01 13:31:25 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:25 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:26 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:26 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:26 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:26 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>[Stage 5000:=============================================&gt;         (9 + 2) / 11]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>[Stage 5002:&gt;                                                       (0 + 8) / 9]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:33 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:34 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:34 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:34 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:34 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:34 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:34 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:34 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:34 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:34 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:34 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:34 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:34 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:34 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:34 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:34 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:34 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:35 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:35 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:35 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:35 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:35 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:35 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:35 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:35 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:35 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:35 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:35 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:35 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:35 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:35 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:35 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:35 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:36 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:36 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:36 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:36 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:36 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:36 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:36 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:36 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:36 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:36 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:36 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:36 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:36 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:36 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:36 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-23/04/01 13:31:36 WARN RowBasedKeyValueBatch: Calling spill() on RowBasedKeyValueBatch. Will not spill but return 0.
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
 <pre>                                                                                </pre>
 </div>
 </div>
@@ -21363,6 +21168,15 @@ class="
 ================================================================================
 DAILY_COST
 </pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
+<pre>                                                                                </pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
@@ -21718,15 +21532,6 @@ class="
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
 <pre>ENERGY
 </pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>                                                                                </pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
@@ -22653,18 +22458,18 @@ class="
     <tr>
       <th>0</th>
       <td>release_date_s</td>
-      <td>129030</td>
+      <td>129648</td>
       <td>-1514772000</td>
       <td>1618524000</td>
-      <td>6.436644e+08</td>
-      <td>83052022392000</td>
-      <td>10984182123600</td>
-      <td>0.098103</td>
-      <td>-0.666785</td>
-      <td>6.356059e+08</td>
-      <td>6.356035e+08</td>
-      <td>4.039949e+17</td>
-      <td>4.039918e+17</td>
+      <td>6.407151e+08</td>
+      <td>83067436238400</td>
+      <td>10982866910400</td>
+      <td>0.075787</td>
+      <td>-0.656014</td>
+      <td>6.358551e+08</td>
+      <td>6.358526e+08</td>
+      <td>4.043117e+17</td>
+      <td>4.043086e+17</td>
     </tr>
   </tbody>
 </table>
@@ -22680,7 +22485,7 @@ class="
 
 
 <div class="jp-RenderedImage jp-OutputArea-output ">
-<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAjAAAAHFCAYAAADsRsNYAAAAOXRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjcuMSwgaHR0cHM6Ly9tYXRwbG90bGliLm9yZy/bCgiHAAAACXBIWXMAAA9hAAAPYQGoP6dpAAA8bUlEQVR4nO3dfVhUdf7/8RcgDKAOpCnIakRa3qSm4qrTjWkiWNTWxtZablFZpj+skMpy1wy1Mi2zO8ptK2lbrXS3rFUTCe9S0YpkMyzTouwOrEzwdkA4vz+6mG8TOMwgdx94Pq5rLpxzPuec93nHzavPOTPjZ1mWJQAAAIP4N3UBAAAAviLAAAAA4xBgAACAcQgwAADAOAQYAABgHAIMAAAwDgEGAAAYhwADAACMQ4ABAADGIcAAkCTdcMMNOv3005u6jAaXmZkpPz8/ffnll01dCoCTQIABAC8tWbJEjz/+eFOXAUAEGADwGgEGaD4IMEALdvjw4aYuAQAaBAEGaCHS09Pl5+ennTt36tprr9Upp5yi888/X5L0r3/9S7GxsQoJCVGHDh00duxYff3117Xus7KyUo8//rjOPvtsBQcHKyIiQrfeeqt+/vlnt3FvvvmmEhMTFRUVJZvNpu7du2v27NmqqKhwG7d7924lJSUpMjJSwcHB6tq1q8aOHauSkhK3cXWt97cKCgp00UUXKSQkRF27dtUDDzygysrKauO8qX/EiBFauXKlvvrqK/n5+cnPz8/tniGn06n7779fPXr0kM1mU7du3TR16lQ5nU6fai4qKtKNN96orl27ymazqUuXLrr88su5Zwf4jTZNXQCA+nXVVVfpzDPP1EMPPSTLsvTggw/qvvvu09VXX62bb75ZP/zwg5566ikNHz5c27dvV3h4+An3deuttyozM1M33nijbr/9dhUWFurpp5/W9u3btXnzZgUGBkr65cbYdu3aKS0tTe3atdPatWs1Y8YMlZaW6pFHHpEklZWVKSEhQU6nU7fddpsiIyP17bffasWKFTpw4IDCwsIk6aTq/bWioiKNHDlSx48f17333qu2bdvqueeeU0hISLWx3tT/t7/9TSUlJfrmm2+0YMECSVK7du0k/RL0/vCHP2jTpk2aMGGCevfurR07dmjBggX67LPPtHz5cq9qlqSkpCQVFBTotttu0+mnn659+/YpOztbe/fubRU3WQNeswC0CPfff78lybrmmmtcy7788ksrICDAevDBB93G7tixw2rTpo3b8uTkZCs6Otr1/N1337UkWYsXL3bbdvXq1dWWHzlypFo9t956qxUaGmodO3bMsizL2r59uyXJWrZs2QnPwZd6a5OammpJsrZt2+Zatm/fPissLMySZBUWFvpUv2VZVmJioluPqrz88suWv7+/9e6777otX7hwoSXJ2rx5s1c1//zzz5Yk65FHHvFqPNCacQkJaGEmTpzo+vfrr7+uyspKXX311frxxx9dj8jISJ155plat27dCfezbNkyhYWFafTo0W7bxsbGql27dm7b/npW4+DBg/rxxx91wQUX6MiRI/r0008lyTXDkpWVpSNHjtR4zJOp97dWrVqlYcOGaciQIa5lnTp10rhx46qN9aZ+T5YtW6bevXurV69ebnVfdNFFkuR13SEhIQoKCtL69eurXaYD4I5LSEALExMT4/r37t27ZVmWzjzzzBrHVl0Cqsnu3btVUlKizp0717h+3759rn8XFBRo+vTpWrt2rUpLS93GVd3fEhMTo7S0ND322GNavHixLrjgAv3hD3/QX/7yF1e4OZl6f+urr77S0KFDqy3v2bNntWXe1O/J7t279cknn6hTp041rv91rzyx2WyaO3eu7rzzTkVERGjYsGG69NJLdf311ysyMtKrfQCtBQEGaGF+PZtQWVkpPz8/vf322woICKg2tuoejppUVlaqc+fOWrx4cY3rq/5YHzhwQBdeeKHsdrtmzZql7t27Kzg4WB9++KHuuecet5tm58+frxtuuEFvvvmm1qxZo9tvv11z5szR1q1b1bVr15Oqt658qf9EKisr1a9fPz322GM1ru/WrZvX9aSmpuqyyy7T8uXLlZWVpfvuu09z5szR2rVrNXDgQK/3A7R0BBigBevevbssy1JMTIzOOussn7d95513dN5559V442uV9evX66efftLrr7+u4cOHu5YXFhbWOL5fv37q16+fpk+fri1btui8887TwoUL9cADD5xUvb8VHR2t3bt3V1u+a9euOtfv5+dX47G6d++u//3vfxo1atQJx/iie/fuuvPOO3XnnXdq9+7dGjBggObPn69//etfJ71voKXgHhigBbvyyisVEBCgmTNnyrIst3WWZemnn3464bZXX321KioqNHv27Grrjh8/rgMHDkiSa6bk1/svKyvTM88847ZNaWmpjh8/7rasX79+8vf3d73U+GTq/a1LLrlEW7du1Xvvveda9sMPP1SbUfK2fklq27ZtjZeUrr76an377bf6xz/+UW3d0aNHvX4/niNHjujYsWNuy7p376727dv7/HJsoKVjBgZowbp3764HHnhA06ZN05dffqkrrrhC7du3V2Fhod544w1NmDBBd911V43bXnjhhbr11ls1Z84c5efnKz4+XoGBgdq9e7eWLVumJ554Qn/605907rnn6pRTTlFycrJuv/12+fn56eWXX64WQNauXavJkyfrqquu0llnnaXjx4/r5ZdfVkBAgJKSkk663t+aOnWqXn75ZY0ZM0Z33HGH62XU0dHR+uijj1zjvK1fkmJjY/Xaa68pLS1Nv//979WuXTtddtlluu6667R06VJNnDhR69at03nnnaeKigp9+umnWrp0qbKysjR48OBaa/7ss880atQoXX311erTp4/atGmjN954Q8XFxRo7dqxX5w20Gk3z4icA9a3qZdQ//PBDtXX/+c9/rPPPP99q27at1bZtW6tXr15WSkqKtWvXLteY376Muspzzz1nxcbGWiEhIVb79u2tfv36WVOnTrW+++4715jNmzdbw4YNs0JCQqyoqChr6tSpVlZWliXJWrdunWVZlvXFF19YN910k9W9e3crODjY6tChgzVy5EjrnXfeqVO93vjoo4+sCy+80AoODrZ+97vfWbNnz7ZeeOGFai+j9qZ+y7KsQ4cOWddee60VHh5uSXLrV1lZmTV37lzr7LPPtmw2m3XKKadYsbGx1syZM62SkhKv6v3xxx+tlJQUq1evXlbbtm2tsLAwa+jQodbSpUt9Om+gNfCzrBr+NwMAAKAZ4x4YAABgHO6BAWCUo0eP1vreLB06dFBQUFAjVeSdkpISHT161OMY3usF8B6XkAAYpeqzmTxZt26dRowY0TgFeemGG27QSy+95HEMv44B7xFgABjl+++/V0FBgccxsbGxOuWUUxqpIu/s3LlT3333nccxcXFxjVQNYD4CDAAAMA438QIAAOO02Jt4Kysr9d1336l9+/b18tbeAACg4VmWpYMHDyoqKkr+/ieeZ2mxAea7777z6QPUAABA8/H111+ra9euJ1zfYgNM+/btJf3SALvd3iDHKC8v15o1a1xvsY7/Q288oz+e0R/P6I9n9Mez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dVOmTNF///tfLVu2TBs2bNB3332nK6+80rW+oqJCiYmJKisr05YtW/TSSy8pMzNTM2bMcI0pLCxUYmKiRo4cqfz8fKWmpurmm29WVlbWSZ4qAABoKXz+KIE2bdooMjKy2vKSkhK98MILWrJkiS666CJJ0qJFi9S7d29t3bpVw4YN05o1a7Rz50698847ioiI0IABAzR79mzdc889Sk9PV1BQkBYuXKiYmBjNnz9fktS7d29t2rRJCxYsUEJCwgnrcjqdcjqdruelpaWSpPLycpWXl/t6ml6p2m9D7d9k9MYz+uMZ/fGsufXHFmA12rG8Oefm1p/mprn3x9u6fA4wu3fvVlRUlIKDg+VwODRnzhyddtppysvLU3l5ueLi4lxje/XqpdNOO025ubkaNmyYcnNz1a9fP0VERLjGJCQkaNKkSSooKNDAgQOVm5vrto+qMampqR7rmjNnjmbOnFlt+Zo1axQaGurrafokOzu7QfdvMnrjGf3xjP541lz6M29I4x1r1apVXo9tLv1prpprf44cOeLVOJ8CzNChQ5WZmamePXvq+++/18yZM3XBBRfo448/VlFRkYKCghQeHu62TUREhIqKiiRJRUVFbuGlan3VOk9jSktLdfToUYWEhNRY27Rp05SWluZ6Xlpaqm7duik+Pl52u92X0/RaeXm5srOzNXr0aAUGBjbIMUxFbzyjP57RH8+aW3/6pjfeJf6P0088E1+lufWnuWnu/am6glIbnwLMxRdf7Pp3//79NXToUEVHR2vp0qUnDBaNxWazyWazVVseGBjY4P+BGuMYpqI3ntEfz+iPZ82lP84Kv0Y7li/n21z601w11/54W9NJvYw6PDxcZ511lvbs2aPIyEiVlZXpwIEDbmOKi4td98xERkZWe1VS1fPaxtjt9iYPSQAAoHk4qQBz6NAhff755+rSpYtiY2MVGBionJwc1/pdu3Zp7969cjgckiSHw6EdO3Zo3759rjHZ2dmy2+3q06ePa8yv91E1pmofAAAAPgWYu+66Sxs2bNCXX36pLVu26I9//KMCAgJ0zTXXKCwsTOPHj1daWprWrVunvLw83XjjjXI4HBo2bJgkKT4+Xn369NF1112n//3vf8rKytL06dOVkpLiuvwzceJEffHFF5o6dao+/fRTPfPMM1q6dKmmTJlS/2cPAACM5NM9MN98842uueYa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MD548MEHde655yo0NNTrd/m94YYb5Ofn5/YYM2ZMwxbaROrSH8uyNGPGDHXp0kUhISGKi4vT7t27G7bQJrJ//36NGzdOdrtd4eHhGj9+vA4dOuRxmxEjRlT7/pk4cWIjVdywMjIydPrppys4OFhDhw7Ve++953H8smXL1KtXLwUHB6tfv35atWpVI1XaNHzpT2ZmZrXvk+Dg4EastnFt3LhRl112maKiouTn56fly5fXus369es1aNAg2Ww29ejRQ5mZmQ1eZ1PxtT/r16+v9v3j5+enoqKixim4jggwPigrK9NVV12lSZMm+bTdmDFj9P3337ser7zySgNV2LTq0p958+bpySef1MKFC7Vt2za1bdtWCQkJOnbsWANW2jTGjRungoICZWdna8WKFdq4caMmTJhQ63a33HKL2/fPvHnzGqHahvXaa68pLS1N999/vz788EOdc845SkhI0L59+2ocv2XLFl1zzTUaP368tm/friuuuEJXXHGFPv7440auvHH42h/pl7eF//X3yVdffdWIFTeuw4cP65xzzlFGRoZX4wsLC5WYmKiRI0cqPz9fqampuvnmm5WVldXAlTYNX/tTZdeuXW7fQ507d26gCutJvXx8dCuzaNEiKywszKuxycnJ1uWXX96g9TQ33vansrLSioyMtB555BHXsgMHDlg2m8165ZVXGrDCxrdz505LkvX++++7lr399tuWn5+f9e23355wuwsvvNC64447GqHCxjVkyBArJSXF9byiosKKioqy5syZU+P4q6++2kpMTHRbNnToUOvWW29t0Dqbiq/98eV3UksjyXrjjTc8jpk6dap19tlnuy3785//bCUkJDRgZc2DN/1Zt26dJcn6+eefG6Wm+sIMTCNYv369OnfurJ49e2rSpEn66aefmrqkZqGwsFBFRUWKi4tzLQsLC9PQoUOVm5vbhJXVv9zcXIWHh2vw4MGuZXFxcfL399e2bds8brt48WKdeuqp6tu3r6ZNm6YjR440dLkNqqysTHl5eW7/3f39/RUXF3fC/+65ublu4yUpISGhxX2fSHXrjyQdOnRI0dHR6tatmy6//HIVFBQ0RrlGaE3fPydjwIAB6tKli0aPHq3Nmzc3dTm1arYfJdBSjBkzRldeeaViYmL0+eef669//asuvvhi5ebmKiAgoKnLa1JV11d/+/EQERERzf7aq6+KioqqTce2adNGHTp08Hiu1157raKjoxUVFaWPPvpI99xzj3bt2qXXX3+9oUtuMD/++KMqKipq/O/+6aef1rhNUVFRq/g+kerWn549e+rFF19U//79VVJSokcffVTnnnuuCgoK1LVr18You1k70fdPaWmpjh49qpCQkCaqrHno0qWLFi5cqMGDB8vpdOr555/XiBEjtG3bNg0aNKipyzuhVh9g7r33Xs2dO9fjmE8++US9evWq0/7Hjh3r+ne/fv3Uv39/de/eXevXr9eoUaPqtM/G1ND9MZ23/amrX98j069fP3Xp0kWjRo3S559/ru7du9d5v2hZHA6HHA6H6/m5556r3r176+9//7tmz57dhJXBBD179lTPnj1dz88991x9/vnnWrBggV5++eUmrMyzVh9g7rzzTt1www0ex5xxxhn1drwzzjhDp556qvbs2WNEgGnI/kRGRkqSiouL1aVLF9fy4uJiDRgwoE77bGze9icyMrLaDZjHjx/X/v37XX3wxtChQyVJe/bsMTbAnHrqqQoICFBxcbHb8uLi4hP2IjIy0qfxJqtLf34rMDBQAwcO1J49exqiROOc6PvHbre3+tmXExkyZIg2bdrU1GV41OoDTKdOndSpU6dGO94333yjn376ye0PdnPWkP2JiYlRZGSkcnJyXIGltLRU27Zt8/mVXk3F2/44HA4dOHBAeXl5io2NlSStXbtWlZWVrlDijfz8fEky5vunJkFBQYqNjVVOTo6uuOIKSVJlZaVycnI0efLkGrdxOBzKyclRamqqa1l2drbbrENLUZf+/FZFRYV27NihSy65pAErNYfD4aj2svuW+v1TX/Lz85v/75mmvovYJF999ZW1fft2a+bMmVa7du2s7du3W9u3b7cOHjzoGtOzZ0/r9ddftyzLsg4ePGjdddddVm5urlVYWGi988471qBBg6wzzzzTOnbsWFOdRoPxtT+WZVkPP/ywFR4ebr355pvWRx99ZF1++eVWTEyMdfTo0aY4hQY1ZswYa+DAgda2bdusTZs2WWeeeaZ1zTXXuNZ/8803Vs+ePa1t27ZZlmVZe/bssWbNmmV98MEHVmFhofXmm29aZ5xxhjV8+PCmOoV68+qrr1o2m83KzMy0du7caU2YMMEKDw+3ioqKLMuyrOuuu8669957XeM3b95stWnTxnr00UetTz75xLr//vutwMBAa8eOHU11Cg3K1/7MnDnTysrKsj7//HMrLy/PGjt2rBUcHGwVFBQ01Sk0qIMHD7p+v0iyHnvsMWv79u3WV199ZVmWZd17773Wdddd5xr/xRdfWKGhodbdd99tffLJJ1ZGRoYVEBBgrV69uqlOoUH52p8FCxZYy5cvt3bv3m3t2LHDuuOOOyx/f3/rnXfeaapT8AoBxgfJycmWpGqPdevWucZIshYtWmRZlmUdOXLEio+Ptzp16mQFBgZa0dHR1i233OL6JdTS+Nofy/rlpdT33XefFRERYdlsNmvUqFHWrl27Gr/4RvDTTz9Z11xzjdWuXTvLbrdbN954o1u4KywsdOvX3r17reHDh1sdOnSwbDab1aNHD+vuu++2SkpKmugM6tdTTz1lnXbaaVZQUJA1ZMgQa+vWra51F154oZWcnOw2funSpdZZZ51lBQUFWWeffba1cuXKRq64cfnSn9TUVNfYiIgI65JLLrE+/PDDJqi6cVS97Pe3j6qeJCcnWxdeeGG1bQYMGGAFBQVZZ5xxhtvvoZbG1/7MnTvX6t69uxUcHGx16NDBGjFihLV27dqmKd4HfpZlWY023QMAAFAPeB8YAABgHAIMAAAwDgEGAAAYhwADAACMQ4ABAADGIcAAAADjEGAAAIBxCDAAAMBrGzdu1GWXXaaoqCj5+flp+fLlPu9j6dKlGjBggEJDQxUdHa1HHnnE530QYAAAgNcOHz6sc845RxkZGXXa/u2339a4ceM0ceJEffzxx3rmmWe0YMECPf300z7th3fiBQAAdeLn56c33njD9cGjkuR0OvW3v/1Nr7zyig4cOKC+fftq7ty5GjFihCTp2muvVXl5uZYtW+ba5qmnntK8efO0d+9e+fn5eXVsZmAAAEC9mTx5snJzc/Xqq6/qo48+0lVXXaUxY8Zo9+7dkn4JOMHBwW7bhISE6JtvvtFXX33l9XEIMAAAoF7s3btXixYt0rJly3TBBReoe/fuuuuuu3T++edr0aJFkqSEhAS9/vrrysnJUWVlpT777DPNnz9fkvT99997faw2DXIGAACg1dmxY4cqKip01llnuS13Op3q2LGjJOmWW27R559/rksvvVTl5eWy2+264447lJ6eLn9/7+dVCDAAAKBeHDp0SAEBAcrLy1NAQIDbunbt2kn65b6ZuXPn6qGHHlJRUZE6deqknJwcSdIZZ5zh9bEIMAAAoF4MHDhQFRUV2rdvny644AKPYwMCAvS73/1OkvTKK6/I4XCoU6dOXh+LAAMAALx26NAh7dmzx/W8sLBQ+fn56tChg8466yyNGzdO119/vebPn6+BAwfqhx9+UE5Ojvr376/ExET9+OOP+ve//60RI0bo2LFjrntmNmzY4FMdvIwaAAB4bf369Ro5cmS15cnJycrMzFR5ebkeeOAB/fOf/9S3336rU089VcOGDdPMmTPVr18//fjjj7rsssu0Y8cOWZYlh8OhBx98UEOHDvWpDgIMAAAwDi+jBgAAxiHAAAAA4xBgAACAcQgwAADAOAQYAABgHAIMAAAwDgEGAAAYhwADAACMQ4ABAADGIcAAAADjEGAAAIBx/j8LpIkY+ekJgQAAAABJRU5ErkJggg=="
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAjAAAAHFCAYAAADsRsNYAAAAOXRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjcuMSwgaHR0cHM6Ly9tYXRwbG90bGliLm9yZy/bCgiHAAAACXBIWXMAAA9hAAAPYQGoP6dpAAA8LUlEQVR4nO3dfVxUdf7//ycgDKAOpCnIakRaXqSm4irThXmBYFFbm59a000qy/SLFVJZftYMtTItMyvLbStpW610t2xXS0S8SkUrko2wTIuyC8HKBC8B4fz+6Md8msBhBrl6w+N+u80N55z3OfM6r7h49j7nzPhYlmUJAADAIL6NXQAAAIC3CDAAAMA4BBgAAGAcAgwAADAOAQYAABiHAAMAAIxDgAEAAMYhwAAAAOMQYAAAgHEIMAAkSTfffLPOPffcxi6j3qWlpcnHx0dfffVVY5cC4AwQYADAQ8uXL9dTTz3V2GUAEAEGADxGgAGaDgIM0IwdO3assUsAgHpBgAGaidTUVPn4+Gj37t0aO3aszjrrLF166aWSpH/84x+Kjo5WUFCQ2rVrpzFjxuibb76pcZ8VFRV66qmndOGFFyowMFBhYWG644479PPPP7uMe/vtt5WQkKCIiAjZbDZ17dpVc+bMUXl5ucu4vXv3avTo0QoPD1dgYKA6d+6sMWPGqKioyGVcbev9rby8PA0fPlxBQUHq3LmzHn74YVVUVFQZ50n9Q4cO1Zo1a/T111/Lx8dHPj4+LtcMlZSU6KGHHlK3bt1ks9nUpUsXTZs2TSUlJV7VXFBQoFtuuUWdO3eWzWZTp06ddM0113DNDvAbrRq7AAB16/rrr9f555+vRx99VJZl6ZFHHtGDDz6oG264Qbfddpt++OEHPfPMMxoyZIh27dql0NDQ0+7rjjvuUFpamm655Rbdddddys/P17PPPqtdu3Zp27Zt8vf3l/TLhbFt2rRRSkqK2rRpow0bNmjmzJkqLi7W448/LkkqLS1VfHy8SkpKdOeddyo8PFzfffedVq9ercOHDyskJESSzqjeXysoKNCwYcN06tQpPfDAA2rdurVeeOEFBQUFVRnrSf1/+ctfVFRUpG+//VYLFy6UJLVp00bSL0HvD3/4g7Zu3aqJEyeqZ8+eys3N1cKFC/X5559r1apVHtUsSaNHj1ZeXp7uvPNOnXvuuTp48KAyMjK0f//+FnGRNeAxC0Cz8NBDD1mSrBtvvNG57KuvvrL8/PysRx55xGVsbm6u1apVK5fliYmJVmRkpPP5e++9Z0myli1b5rLt2rVrqyw/fvx4lXruuOMOKzg42Dp58qRlWZa1a9cuS5K1cuXK0x6DN/XWJDk52ZJk7dy507ns4MGDVkhIiCXJys/P96p+y7KshIQElx5VevXVVy1fX1/rvffec1m+ZMkSS5K1bds2j2r++eefLUnW448/7tF4oCXjFBLQzEyaNMn57zfffFMVFRW64YYb9OOPPzof4eHhOv/887Vx48bT7mflypUKCQnRyJEjXbaNjo5WmzZtXLb99azGkSNH9OOPP+qyyy7T8ePH9dlnn0mSc4YlPT1dx48fr/Y1z6Te33rnnXcUExOjQYMGOZd16NBB48aNqzLWk/rdWblypXr27KkePXq41D18+HBJ8rjuoKAgBQQEaNOmTVVO0wFwxSkkoJmJiopy/nvv3r2yLEvnn39+tWMrTwFVZ+/evSoqKlLHjh2rXX/w4EHnv/Py8jRjxgxt2LBBxcXFLuMqr2+JiopSSkqKnnzySS1btkyXXXaZ/vCHP+jPf/6zM9ycSb2/9fXXX2vw4MFVlnfv3r3KMk/qd2fv3r369NNP1aFDh2rX/7pX7thsNs2bN0/33HOPwsLCFBMTo6uuukrjx49XeHi4R/sAWgoCDNDM/Ho2oaKiQj4+Pnr33Xfl5+dXZWzlNRzVqaioUMeOHbVs2bJq11f+sT58+LAuv/xy2e12zZ49W127dlVgYKA++ugj3X///S4XzS5YsEA333yz3n77ba1bt0533XWX5s6dqx07dqhz585nVG9teVP/6VRUVKhPnz568sknq13fpUsXj+tJTk7W1VdfrVWrVik9PV0PPvig5s6dqw0bNqh///4e7wdo7ggwQDPWtWtXWZalqKgoXXDBBV5vu379el1yySXVXvhaadOmTfrpp5/05ptvasiQIc7l+fn51Y7v06eP+vTpoxkzZmj79u265JJLtGTJEj388MNnVO9vRUZGau/evVWW79mzp9b1+/j4VPtaXbt21X//+1+NGDHitGO80bVrV91zzz265557tHfvXvXr108LFizQP/7xjzPeN9BccA0M0Ixdd9118vPz06xZs2RZlss6y7L0008/nXbbG264QeXl5ZozZ06VdadOndLhw4clyTlT8uv9l5aW6rnnnnPZpri4WKdOnXJZ1qdPH/n6+jpvNT6Ten/ryiuv1I4dO/T+++87l/3www9VZpQ8rV+SWrduXe0ppRtuuEHfffed/va3v1VZd+LECY/fj+f48eM6efKky7KuXbuqbdu2Xt+ODTR3zMAAzVjXrl318MMPa/r06frqq6907bXXqm3btsrPz9dbb72liRMn6t57761228svv1x33HGH5s6dq5ycHMXFxcnf31979+7VypUrtWjRIv3P//yPLr74Yp111llKTEzUXXfdJR8fH7366qtVAsiGDRs0ZcoUXX/99brgggt06tQpvfrqq/Lz89Po0aPPuN7fmjZtml599VWNGjVKd999t/M26sjISH388cfOcZ7WL0nR0dF64403lJKSot///vdq06aNrr76at10001asWKFJk2apI0bN+qSSy5ReXm5PvvsM61YsULp6ekaOHBgjTV//vnnGjFihG644Qb16tVLrVq10ltvvaXCwkKNGTPGo+MGWozGufkJQF2rvI36hx9+qLLuX//6l3XppZdarVu3tlq3bm316NHDSkpKsvbs2eMc89vbqCu98MILVnR0tBUUFGS1bdvW6tOnjzVt2jTr+++/d47Ztm2bFRMTYwUFBVkRERHWtGnTrPT0dEuStXHjRsuyLOvLL7+0br31Vqtr165WYGCg1a5dO2vYsGHW+vXra1WvJz7++GPr8ssvtwIDA63f/e531pw5c6yXXnqpym3UntRvWZZ19OhRa+zYsVZoaKglyaVfpaWl1rx586wLL7zQstls1llnnWVFR0dbs2bNsoqKijyq98cff7SSkpKsHj16WK1bt7ZCQkKswYMHWytWrPDquIGWwMeyqvnfDAAAgCaMa2AAAIBxuAYGgFFOnDhR43uztGvXTgEBAQ1UkWeKiop04sQJt2N4rxfAc5xCAmCUys9mcmfjxo0aOnRowxTkoZtvvlmvvPKK2zH8OgY8R4ABYJQDBw4oLy/P7Zjo6GidddZZDVSRZ3bv3q3vv//e7ZjY2NgGqgYwHwEGAAAYh4t4AQCAcZrtRbwVFRX6/vvv1bZt2zp5a28AAFD/LMvSkSNHFBERIV/f08+zNNsA8/3333v1AWoAAKDp+Oabb9S5c+fTrm+2AaZt27aSfmmA3W6vl9coKyvTunXrnG+xjv9Db9yjP+7RH/foj3v0x72m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1y7r66+/tizLsh544AHrpptuco7/8ssvreDgYOu+++6zPv30U2vx4sWWn5+ftXbt2sY6hHrlbX8WLlxorVq1ytq7d6+Vm5tr3X333Zavr6+1fv36xjoEjxBgvJCYmGhJqvLYuHGjc4wka+nSpZZlWdbx48etuLg4q0OHDpa/v78VGRlp3X777c5fQs2Nt/2xrF9upX7wwQetsLAwy2azWSNGjLD27NnT8MU3gJ9++sm68cYbrTZt2lh2u9265ZZbXMJdfn6+S7/2799vDRkyxGrXrp1ls9msbt26Wffdd59VVFTUSEdQt5555hnrnHPOsQICAqxBgwZZO3bscK67/PLLrcTERJfxK1assC644AIrICDAuvDCC601a9Y0cMUNy5v+JCcnO8eGhYVZV155pfXRRx81QtUNo/K2398+KnuSmJhoXX755VW26devnxUQEGCdd955Lr+Hmhtv+zNv3jyra9euVmBgoNWuXTtr6NCh1oYNGxqneC/4WJZlNdh0DwAAQB3gfWAAAIBxCDAAAMA4BBgAAGAcAgwAADAOAQYAABiHAAMAAIxDgAEAAMYhwAAAAI9t2bJFV199tSIiIuTj46NVq1Z5vY8VK1aoX79+Cg4OVmRkpB5//HGv90GAAQAAHjt27JguuugiLV68uFbbv/vuuxo3bpwmTZqkTz75RM8995wWLlyoZ5991qv98E68AACgVnx8fPTWW285P3hUkkpKSvSXv/xFr732mg4fPqzevXtr3rx5Gjp0qCRp7NixKisr08qVK53bPPPMM5o/f772798vHx8fj16bGRgAAFBnpkyZoqysLL3++uv6+OOPdf3112vUqFHau3evpF8CTmBgoMs2QUFB+vbbb/X11197/DoEGAAAUCf279+vpUuXauXKlbrsssvUtWtX3Xvvvbr00ku1dOlSSVJ8fLzefPNNZWZmqqKiQp9//rkWLFggSTpw4IDHr9WqXo4AAAC0OLm5uSovL9cFF1zgsrykpETt27eXJN1+++364osvdNVVV6msrEx2u1133323UlNT5evr+bwKAQYAANSJo0ePys/PT9nZ2fLz83NZ16ZNG0m/XDczb948PfrooyooKFCHDh2UmZkpSTrvvPM8fi0CDAAAqBP9+/dXeXm5Dh48qMsuu8ztWD8/P/3ud7+TJL322mtyOBzq0KGDx69FgAEAAB47evSo9u3b53yen5+vnJwctWvXThdccIHGjRun8ePHa8GCBerfv79++OEHZWZmqm/fvkpISNCPP/6of/7znxo6dKhOnjzpvGZm8+bNXtXBbdQAAMBjmzZt0rBhw6osT0xMVFpamsrKyvTwww/r73//u7777judffbZiomJ0axZs9SnTx/9+OOPuvrqq5WbmyvLsuRwOPTII49o8ODBXtVBgAEAAMbhNmoAAGAcAgwAADAOAQYAABiHAAMAAIxDgAEAAMYhwAAAAOMQYAAAgHEIMAAAwDgEGAAAYBwCDAAAMA4BBgAAGOf/A0Ieg/uElwbYAAAAAElFTkSuQmCC"
 class="
 "
 >
@@ -23256,6 +23061,1704 @@ FAVOURITE_GENRES
     <tr>
       <th>0</th>
       <td>50</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div><div  class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">JOINS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">(</span><span class="s1">&#39;artists&#39;</span><span class="p">,</span> <span class="s1">&#39;tracks&#39;</span><span class="p">)</span> <span class="p">:</span> <span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;id_artist&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;tracks&#39;</span><span class="p">,</span> <span class="s1">&#39;track_storage&#39;</span><span class="p">)</span> <span class="p">:</span> <span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;track_id&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;tracks&#39;</span><span class="p">,</span> <span class="s1">&#39;sessions&#39;</span><span class="p">)</span> <span class="p">:</span> <span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;track_id&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="s1">&#39;sessions&#39;</span><span class="p">)</span> <span class="p">:</span> <span class="p">(</span><span class="s1">&#39;user_id&#39;</span><span class="p">,</span> <span class="s1">&#39;user_id&#39;</span><span class="p">),</span>
+<span class="p">}</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div  class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">count_everything</span><span class="p">(</span><span class="n">table</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;--sql</span>
+<span class="s2">        SELECT</span>
+<span class="s2">            COUNT(*) AS length_</span><span class="si">{</span><span class="n">table</span><span class="si">}</span>
+<span class="s2">        FROM </span><span class="si">{</span><span class="n">table</span><span class="si">}</span>
+<span class="s2">    &quot;&quot;&quot;</span>
+
+<span class="k">def</span> <span class="nf">count_joined</span><span class="p">(</span><span class="n">tables</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">ids</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;--sql</span>
+<span class="s2">        SELECT</span>
+<span class="s2">            COUNT(*) AS length_</span><span class="si">{</span><span class="n">tables</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">tables</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span>
+<span class="s2">        FROM </span><span class="si">{</span><span class="n">tables</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> AS first</span>
+<span class="s2">        INNER JOIN </span><span class="si">{</span><span class="n">tables</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> AS second ON first.</span><span class="si">{</span><span class="n">ids</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> == second.</span><span class="si">{</span><span class="n">ids</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span>
+<span class="s2">    &quot;&quot;&quot;</span>
+
+<span class="k">def</span> <span class="nf">count_joined_distinct</span><span class="p">(</span><span class="n">tables</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">ids</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;--sql</span>
+<span class="s2">        SELECT</span>
+<span class="s2">            COUNT(DISTINCT first.</span><span class="si">{</span><span class="n">ids</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">) AS length_</span><span class="si">{</span><span class="n">tables</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">tables</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">_distinct</span>
+<span class="s2">        FROM </span><span class="si">{</span><span class="n">tables</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> AS first</span>
+<span class="s2">        INNER JOIN </span><span class="si">{</span><span class="n">tables</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> AS second ON first.</span><span class="si">{</span><span class="n">ids</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> == second.</span><span class="si">{</span><span class="n">ids</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span>
+<span class="s2">    &quot;&quot;&quot;</span>
+
+<span class="k">for</span> <span class="n">tables</span><span class="p">,</span> <span class="n">ids</span> <span class="ow">in</span> <span class="n">JOINS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">tables</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">tables</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="n">count_everything</span><span class="p">(</span><span class="n">tables</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">toPandas</span><span class="p">())</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="n">count_everything</span><span class="p">(</span><span class="n">tables</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">toPandas</span><span class="p">())</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="n">count_joined</span><span class="p">(</span><span class="n">tables</span><span class="p">,</span> <span class="n">ids</span><span class="p">))</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">toPandas</span><span class="p">())</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="n">count_joined_distinct</span><span class="p">(</span><span class="n">tables</span><span class="p">,</span> <span class="n">ids</span><span class="p">))</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">toPandas</span><span class="p">())</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>ARTISTS - TRACKS
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>length_artists</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>27524</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>length_tracks</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>129648</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>length_artists_tracks</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>129648</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>length_artists_tracks_distinct</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>27524</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>TRACKS - TRACK_STORAGE
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>length_tracks</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>129648</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>length_track_storage</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>129648</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>length_tracks_track_storage</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>129648</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
+<pre>                                                                                </pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>length_tracks_track_storage_distinct</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>129648</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>TRACKS - SESSIONS
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>length_tracks</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>129648</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
+<pre>                                                                                </pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>length_sessions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>10191762</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
+<pre>                                                                                </pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>length_tracks_sessions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>8903444</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
+<pre>                                                                                </pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>length_tracks_sessions_distinct</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>10708</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>USERS - SESSIONS
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>length_users</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>20000</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
+<pre>                                                                                </pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>length_sessions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>10191762</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
+<pre>                                                                                </pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>length_users_sessions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>10191762</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
+<pre>                                                                                </pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>length_users_sessions_distinct</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>20000</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div><div  class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">select_unknown</span><span class="p">(</span><span class="n">tables</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">ids</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;SELECT DISTINCT </span><span class="si">{</span><span class="n">ids</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1"> AS id FROM </span><span class="si">{</span><span class="n">tables</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">createOrReplaceTempView</span><span class="p">(</span><span class="s1">&#39;temporary&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;--sql</span>
+<span class="s2">        SELECT</span>
+<span class="s2">            *</span>
+<span class="s2">        FROM </span><span class="si">{</span><span class="n">tables</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span>
+<span class="s2">        WHERE </span><span class="si">{</span><span class="n">ids</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> NOT IN (SELECT id FROM temporary)</span>
+<span class="s2">    &quot;&quot;&quot;</span>
+
+<span class="k">for</span> <span class="n">tables</span><span class="p">,</span> <span class="n">ids</span> <span class="ow">in</span> <span class="n">JOINS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">tables</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">tables</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="n">select_unknown</span><span class="p">(</span><span class="n">tables</span><span class="p">,</span> <span class="n">ids</span><span class="p">))</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">toPandas</span><span class="p">())</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="n">select_unknown</span><span class="p">(</span><span class="n">tables</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">ids</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">toPandas</span><span class="p">())</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>ARTISTS - TRACKS
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>genres</th>
+      <th>id</th>
+      <th>name</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>acousticness</th>
+      <th>danceability</th>
+      <th>duration_ms</th>
+      <th>energy</th>
+      <th>explicit</th>
+      <th>id</th>
+      <th>id_artist</th>
+      <th>instrumentalness</th>
+      <th>key</th>
+      <th>liveness</th>
+      <th>loudness</th>
+      <th>name</th>
+      <th>popularity</th>
+      <th>release_date</th>
+      <th>speechiness</th>
+      <th>tempo</th>
+      <th>valence</th>
+      <th>release_date_s</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>TRACKS - TRACK_STORAGE
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>acousticness</th>
+      <th>danceability</th>
+      <th>duration_ms</th>
+      <th>energy</th>
+      <th>explicit</th>
+      <th>id</th>
+      <th>id_artist</th>
+      <th>instrumentalness</th>
+      <th>key</th>
+      <th>liveness</th>
+      <th>loudness</th>
+      <th>name</th>
+      <th>popularity</th>
+      <th>release_date</th>
+      <th>speechiness</th>
+      <th>tempo</th>
+      <th>valence</th>
+      <th>release_date_s</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
+<pre>                                                                                </pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>daily_cost</th>
+      <th>storage_class</th>
+      <th>track_id</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>TRACKS - SESSIONS
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
+<pre>                                                                                </pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>acousticness</th>
+      <th>danceability</th>
+      <th>duration_ms</th>
+      <th>energy</th>
+      <th>explicit</th>
+      <th>id</th>
+      <th>id_artist</th>
+      <th>instrumentalness</th>
+      <th>key</th>
+      <th>liveness</th>
+      <th>loudness</th>
+      <th>name</th>
+      <th>popularity</th>
+      <th>release_date</th>
+      <th>speechiness</th>
+      <th>tempo</th>
+      <th>valence</th>
+      <th>release_date_s</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.8390</td>
+      <td>0.740</td>
+      <td>75040</td>
+      <td>0.891</td>
+      <td>0</td>
+      <td>708ZiYL3ydBWHS2a7gvJB3</td>
+      <td>0PCtW4w0RN89andUBQ3TVv</td>
+      <td>0.000000</td>
+      <td>7</td>
+      <td>0.8690</td>
+      <td>-7.480</td>
+      <td>031 - Der Schatz im Silbersee I - Teil 39</td>
+      <td>13</td>
+      <td>1968-09-11</td>
+      <td>0.8920</td>
+      <td>51.496</td>
+      <td>0.557</td>
+      <td>-41216400</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.6950</td>
+      <td>0.603</td>
+      <td>291227</td>
+      <td>0.517</td>
+      <td>0</td>
+      <td>48SFtLr5URCI97X2Ynfdnc</td>
+      <td>2yTUYhIf8fxptTIy3KLuJD</td>
+      <td>0.000003</td>
+      <td>6</td>
+      <td>0.7440</td>
+      <td>-8.504</td>
+      <td>Par Avion (Live) ( 2014 - Remaster) - Live; 20...</td>
+      <td>0</td>
+      <td>2014</td>
+      <td>0.0235</td>
+      <td>96.181</td>
+      <td>0.327</td>
+      <td>1388530800</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.9530</td>
+      <td>0.313</td>
+      <td>166080</td>
+      <td>0.116</td>
+      <td>0</td>
+      <td>1y0U0HAe5QfTRzOsz74bOt</td>
+      <td>338mC0yGyX0C9of8QMJ5hK</td>
+      <td>0.331000</td>
+      <td>0</td>
+      <td>0.1610</td>
+      <td>-12.645</td>
+      <td>My Foolish Heart</td>
+      <td>25</td>
+      <td>1950-01-01</td>
+      <td>0.0319</td>
+      <td>74.071</td>
+      <td>0.255</td>
+      <td>-631155600</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.1670</td>
+      <td>0.958</td>
+      <td>244133</td>
+      <td>0.635</td>
+      <td>0</td>
+      <td>2TlbZ8JhF9ORa7lJylxABw</td>
+      <td>5A4ExW2nMBFRy2JDoYUcUE</td>
+      <td>0.000000</td>
+      <td>11</td>
+      <td>0.3620</td>
+      <td>-7.853</td>
+      <td>Kathysterisi</td>
+      <td>14</td>
+      <td>1998</td>
+      <td>0.2590</td>
+      <td>108.024</td>
+      <td>0.866</td>
+      <td>883609200</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.1200</td>
+      <td>0.684</td>
+      <td>235974</td>
+      <td>0.839</td>
+      <td>0</td>
+      <td>7ij5kN8jwXr8fZD54M0xb6</td>
+      <td>48CUA59SDed3IdCctKndud</td>
+      <td>0.000000</td>
+      <td>4</td>
+      <td>0.3540</td>
+      <td>-6.457</td>
+      <td>Aleni Aleni</td>
+      <td>51</td>
+      <td>2015</td>
+      <td>0.0658</td>
+      <td>128.051</td>
+      <td>0.580</td>
+      <td>1420066800</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>118935</th>
+      <td>0.4110</td>
+      <td>0.633</td>
+      <td>214773</td>
+      <td>0.345</td>
+      <td>0</td>
+      <td>59nszNIEDpnOS0prsKudPb</td>
+      <td>6wcIBaOvA9XNGgPujYZZ7L</td>
+      <td>0.000028</td>
+      <td>4</td>
+      <td>0.3610</td>
+      <td>-15.231</td>
+      <td>最真的夢</td>
+      <td>16</td>
+      <td>1990-02-05</td>
+      <td>0.0291</td>
+      <td>132.691</td>
+      <td>0.368</td>
+      <td>634172400</td>
+    </tr>
+    <tr>
+      <th>118936</th>
+      <td>0.2220</td>
+      <td>0.295</td>
+      <td>213667</td>
+      <td>0.417</td>
+      <td>0</td>
+      <td>0xiHNGGiSfrFfOJZGpxpJY</td>
+      <td>04u3fc37nHFKN7GJTSIwI8</td>
+      <td>0.000006</td>
+      <td>6</td>
+      <td>0.1480</td>
+      <td>-8.002</td>
+      <td>By My Side</td>
+      <td>61</td>
+      <td>2017-08-11</td>
+      <td>0.0307</td>
+      <td>64.687</td>
+      <td>0.135</td>
+      <td>1502402400</td>
+    </tr>
+    <tr>
+      <th>118937</th>
+      <td>0.6720</td>
+      <td>0.347</td>
+      <td>208467</td>
+      <td>0.216</td>
+      <td>0</td>
+      <td>4peXvhLT61oP9leXdPQ36B</td>
+      <td>4etuCZVdP8yiNPn4xf0ie5</td>
+      <td>0.000118</td>
+      <td>8</td>
+      <td>0.0738</td>
+      <td>-15.215</td>
+      <td>Cu Cu Rru Cu Cu Paloma</td>
+      <td>49</td>
+      <td>1978</td>
+      <td>0.0315</td>
+      <td>108.566</td>
+      <td>0.478</td>
+      <td>252457200</td>
+    </tr>
+    <tr>
+      <th>118938</th>
+      <td>0.0229</td>
+      <td>0.784</td>
+      <td>214827</td>
+      <td>0.821</td>
+      <td>0</td>
+      <td>2pS2IdtMXpvaEONreUlSAo</td>
+      <td>6IE6z7DcZIT4Ml3Fh5Ivch</td>
+      <td>0.000007</td>
+      <td>0</td>
+      <td>0.1760</td>
+      <td>-7.621</td>
+      <td>No Quiero Saber - 2000 Mix</td>
+      <td>26</td>
+      <td>1990</td>
+      <td>0.0423</td>
+      <td>119.609</td>
+      <td>0.885</td>
+      <td>631148400</td>
+    </tr>
+    <tr>
+      <th>118939</th>
+      <td>0.7200</td>
+      <td>0.701</td>
+      <td>139691</td>
+      <td>0.715</td>
+      <td>0</td>
+      <td>5m5g55OSy0kQnaxKU4lZ11</td>
+      <td>7FsRH5bw8iWpSbMX1G7xf1</td>
+      <td>0.000000</td>
+      <td>9</td>
+      <td>0.2970</td>
+      <td>-5.876</td>
+      <td>Ojitos De Golondrina</td>
+      <td>52</td>
+      <td>1991-12-19</td>
+      <td>0.0305</td>
+      <td>104.061</td>
+      <td>0.970</td>
+      <td>693097200</td>
+    </tr>
+  </tbody>
+</table>
+<p>118940 rows × 18 columns</p>
+</div>
+</div>
+
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
+<pre>                                                                                </pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>event_type</th>
+      <th>session_id</th>
+      <th>timestamp</th>
+      <th>track_id</th>
+      <th>user_id</th>
+      <th>timestamp_s</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>ADVERTISEMENT</td>
+      <td>124</td>
+      <td>2020-04-17T16:48:26.836000</td>
+      <td></td>
+      <td>101</td>
+      <td>1587134906</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>ADVERTISEMENT</td>
+      <td>124</td>
+      <td>2020-04-17T16:55:35.031000</td>
+      <td></td>
+      <td>101</td>
+      <td>1587135335</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>ADVERTISEMENT</td>
+      <td>124</td>
+      <td>2020-04-17T17:13:11.269000</td>
+      <td></td>
+      <td>101</td>
+      <td>1587136391</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>ADVERTISEMENT</td>
+      <td>124</td>
+      <td>2020-04-17T17:16:39.747000</td>
+      <td></td>
+      <td>101</td>
+      <td>1587136599</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>ADVERTISEMENT</td>
+      <td>124</td>
+      <td>2020-04-17T17:28:35.461000</td>
+      <td></td>
+      <td>101</td>
+      <td>1587137315</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>1288313</th>
+      <td>ADVERTISEMENT</td>
+      <td>269649</td>
+      <td>2021-09-06T17:13:18.086000</td>
+      <td></td>
+      <td>20100</td>
+      <td>1630941198</td>
+    </tr>
+    <tr>
+      <th>1288314</th>
+      <td>ADVERTISEMENT</td>
+      <td>269649</td>
+      <td>2021-09-06T17:19:25.038000</td>
+      <td></td>
+      <td>20100</td>
+      <td>1630941565</td>
+    </tr>
+    <tr>
+      <th>1288315</th>
+      <td>ADVERTISEMENT</td>
+      <td>269649</td>
+      <td>2021-09-06T17:22:12.632000</td>
+      <td></td>
+      <td>20100</td>
+      <td>1630941732</td>
+    </tr>
+    <tr>
+      <th>1288316</th>
+      <td>ADVERTISEMENT</td>
+      <td>269649</td>
+      <td>2021-09-06T17:24:52.352000</td>
+      <td></td>
+      <td>20100</td>
+      <td>1630941892</td>
+    </tr>
+    <tr>
+      <th>1288317</th>
+      <td>BUY_PREMIUM</td>
+      <td>269649</td>
+      <td>2021-09-06T17:25:17.352000</td>
+      <td></td>
+      <td>20100</td>
+      <td>1630941917</td>
+    </tr>
+  </tbody>
+</table>
+<p>1288318 rows × 6 columns</p>
+</div>
+</div>
+
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>USERS - SESSIONS
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
+<pre>                                                                                </pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>city</th>
+      <th>favourite_genres</th>
+      <th>name</th>
+      <th>premium_user</th>
+      <th>street</th>
+      <th>user_id</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
+<pre>                                                                                </pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>event_type</th>
+      <th>session_id</th>
+      <th>timestamp</th>
+      <th>track_id</th>
+      <th>user_id</th>
+      <th>timestamp_s</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div><div  class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">premium_user_comparison</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;--sql</span>
+<span class="s2">    SELECT</span>
+<span class="s2">        COUNT_IF(premium_user == 1) AS premium_users,</span>
+<span class="s2">        COUNT_IF(premium_user == 0) AS non_premium_users,</span>
+<span class="s2">        COUNT_IF(premium_user == 0) / COUNT(*) * 100 AS non_premium_users_percentage,</span>
+<span class="s2">        COUNT_IF(premium_user == 1) / COUNT(*) * 100 AS premium_users_percentage</span>
+<span class="s2">    FROM users</span>
+<span class="s2">&quot;&quot;&quot;</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="n">premium_user_comparison</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">toPandas</span><span class="p">())</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>premium_users</th>
+      <th>non_premium_users</th>
+      <th>non_premium_users_percentage</th>
+      <th>premium_users_percentage</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>8385</td>
+      <td>11615</td>
+      <td>58.075</td>
+      <td>41.925</td>
     </tr>
   </tbody>
 </table>
