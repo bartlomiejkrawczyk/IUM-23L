@@ -105,6 +105,7 @@ venv.bak/
 
 # Spark
 spark-warehouse/
+metastore_db/
 
 # Visual Studio Code
 .vscode
