@@ -143,6 +143,67 @@ artists_tracks = f"""--sql
     GROUP BY artist_id, genres, number_of_genres
 """
 
-result = artists_tracks
+track_genres = f"""--sql
+    SELECT
+        track_id,
+        artist_id,
+        genres
+    FROM ({tracks})
+    INNER JOIN ({artists}) USING (artist_id)
+"""
+
+premium_users = f"""--sql
+    SELECT
+        user_id,
+        premium_user,
+
+        timestamp AS premium_timestamp
+
+    FROM ({users})
+    INNER JOIN ({sessions}) USING (user_id)
+    WHERE premium_user AND event_type == 'BUY_PREMIUM'
+"""
+
+users_before_premium = f"""--sql
+    SELECT
+        user_id,
+        premium_user,
+
+        IFNULL(MIN(timestamp), NOW()) AS non_premium_up_to
+
+    FROM ({users})
+    LEFT JOIN ({sessions}) USING (user_id)
+    WHERE event_type == 'BUY_PREMIUM' OR event_type IS NULL
+    GROUP BY user_id, premium_user
+"""
+
+non_premium_sessions = f"""--sql
+    SELECT
+        *
+    FROM ({sessions})
+    INNER JOIN ({users_before_premium}) USING (user_id)
+    WHERE timestamp < non_premium_up_to
+"""
+
+premium_sessions = f"""--sql
+    SELECT
+        *
+    FROM ({sessions})
+    INNER JOIN ({users_before_premium}) USING (user_id)
+    WHERE timestamp > non_premium_up_to
+"""
+
+user_liked_tracks = f"""--sql
+    SELECT
+        user_id, 
+        track_id
+    FROM ({users})
+    INNER JOIN ({sessions}) USING (user_id)
+    INNER JOIN ({tracks}) USING (track_id)
+    WHERE event_type == 'LIKE'
+    GROUP BY user_id, track_id
+"""
+
+result = user_liked_tracks
 
 spark.sql(result).show()
