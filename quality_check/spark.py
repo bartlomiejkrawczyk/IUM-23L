@@ -8,7 +8,6 @@ def createSession() -> SparkSession:
         .getOrCreate()
 
     spark.conf.set("spark.sql.execution.arrow.pyspark.enabled", "true")
-    spark.conf.set("spark.sql.execution.arrow.enabled", "true")
     spark.conf.set(
         "spark.sql.execution.arrow.pyspark.fallback.enabled", "true"
     )
