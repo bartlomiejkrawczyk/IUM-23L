@@ -497,6 +497,8 @@ Rozumiemy, że w naszym rozwiązaniu mamy się skupić na **transparentność/zd
 
 4. `loudness` o wartościach dodatnich -60 - 0, -60 ; 4,8
 
+Występuje 41 rekordów o wartościach większych niż 0.0
+
 5. Rozumiem, że pozwalacie dodać piosenki o takiej samej nazwie?
 
 6. `release_date` jest czasami datą w formacie YYYY-MM-DD, a czasami YYYY? Jak mamy to interpretować?
