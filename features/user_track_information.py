@@ -7,6 +7,8 @@ user_tracks = f"""--sql
         user_id,
         track_id,
 
+        COUNT(DISTINCT session_id) AS number_of_sessions,
+
         COUNT_IF(event_type == 'LIKE') AS number_of_likes,
         IFNULL(ANY(event_type == 'LIKE'), FALSE) AS liked_track,
 
