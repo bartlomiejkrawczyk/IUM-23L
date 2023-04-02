@@ -7,7 +7,7 @@ user_tracks = f"""--sql
         user_id,
         track_id,
 
-        COUNT(DISTINCT session_id) AS number_of_sessions,
+        COUNT(DISTINCT session_id) AS number_of_sessions_track_played,
 
         COUNT_IF(event_type == 'LIKE') AS number_of_likes,
         IFNULL(ANY(event_type == 'LIKE'), FALSE) AS liked_track,
@@ -34,4 +34,7 @@ if __name__ == '__main__':
     spark = createSession()
     register_udfs(spark)
     result = user_tracks
-    spark.sql(result).show()
+    spark.sql(result) \
+        .write \
+        .mode(saveMode='overwrite') \
+        .saveAsTable('user_tracks')

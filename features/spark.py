@@ -4,7 +4,7 @@ from pyspark.sql import SparkSession
 
 def createSession() -> SparkSession:
     spark = SparkSession.builder \
-        .master("local[*]") \
+        .master("local[4]") \
         .appName("IUM") \
         .config("spark.sql.warehouse.dir", "./spark-warehouse") \
         .enableHiveSupport() \
