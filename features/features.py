@@ -1,5 +1,7 @@
 from spark import createSession
 from matplotlib import pyplot as plt
+from pyspark.sql.types import IntegerType
+from typing import List
 
 spark = createSession()
 
@@ -153,6 +155,39 @@ track_genres = f"""--sql
     INNER JOIN ({artists}) USING (artist_id)
 """
 
+
+def total_time_listened(events: List[str], start_s: List[int], duration_ms: int) -> int:
+    # TODO: implement me
+    return 100
+
+
+spark.udf.register("total_time_listened", total_time_listened, IntegerType())
+
+user_tracks = f"""--sql
+    SELECT
+        user_id,
+        track_id,
+        COUNT_IF(event_type == 'LIKE') AS number_of_likes,
+        IFNULL(ANY(event_type == 'LIKE'), FALSE) AS liked_track,
+
+        COUNT_IF(event_type == 'SKIP') AS number_of_skips,
+        IFNULL(ANY(event_type == 'SKIP'), FALSE) AS skiped_track,
+
+        COUNT_IF(event_type == 'PLAY') AS number_of_plays,
+        IFNULL(ANY(event_type == 'PLAY'), FALSE) AS played_track,
+
+        TOTAL_TIME_LISTENED(COLLECT_LIST(event_type), COLLECT_LIST(timestamp_s), duration_ms) AS total_time_listened,
+
+        genres,
+        favourite_genres,
+        ARRAY_INTERSECT(genres, favourite_genres) AS user_track_favourite_genre
+    FROM ({tracks})
+    INNER JOIN ({track_genres}) USING (track_id, artist_id)
+    INNER JOIN ({sessions}) USING (track_id)
+    INNER JOIN ({users}) USING (user_id)
+    GROUP BY user_id, track_id, genres, favourite_genres, duration_ms
+"""
+
 premium_users = f"""--sql
     SELECT
         user_id,
@@ -192,17 +227,6 @@ premium_sessions = f"""--sql
     FROM ({sessions})
     INNER JOIN ({users_before_premium}) USING (user_id)
     WHERE timestamp > non_premium_up_to
-"""
-
-user_liked_tracks = f"""--sql
-    SELECT
-        user_id, 
-        track_id
-    FROM ({users})
-    INNER JOIN ({sessions}) USING (user_id)
-    INNER JOIN ({tracks}) USING (track_id)
-    WHERE event_type == 'LIKE'
-    GROUP BY user_id, track_id
 """
 
 non_premium_sessions_event_ratio = f"""--sql
@@ -266,7 +290,17 @@ positive_loudness_tracks = f"""--sql
     WHERE loudness > 0
 """
 
-result = non_premium_sessions_event_ratio
+# =================================== #
+#    GROUP BY USER_ID, YEAR, MONTH    #
+# =================================== #
 
-# spark.sql(result).show()
-non_premium_vs_premium_plot()
+
+# ================== #
+#      FEATURES      #
+# ================== #
+
+
+result = user_tracks
+
+spark.sql(result).show()
+# non_premium_vs_premium_plot()
