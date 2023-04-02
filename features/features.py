@@ -1,35 +1,9 @@
 from spark import createSession
 from matplotlib import pyplot as plt
-from pyspark.sql.types import IntegerType
-from typing import List
+from udfs import register_udfs
 
 from itertools import product  # type: ignore
 
-spark = createSession()
-
-# ========= #
-#    UDF    #
-# ========= #
-
-
-def total_time_listened_ms(events: List[str], start_s: List[int], duration_ms: int) -> int:
-    previous_start = 0
-    plays = 0
-    skips = 0
-    duration_skipped = 0
-    for event, start in sorted(zip(events, start_s), key=lambda x: x[1]):
-        if event == 'PLAY':
-            plays += 1
-            previous_start = start
-        elif event == 'SKIP':
-            skips += 1
-            duration_skipped += start - previous_start
-
-    return duration_skipped * 1000 + duration_ms * (plays - skips)
-
-
-spark.udf.register("total_time_listened_ms",
-                   total_time_listened_ms, IntegerType())
 
 # =========== #
 #    VIEWS    #
@@ -393,12 +367,6 @@ positive_loudness_tracks = f"""--sql
 
 # Postaraj się odpowiedzieć na pytanie - Czy dany użytkownik kupi w tym miesiącu premium?
 
-month_columns = ['year', 'month']
-months = product(range(2019, 2024), range(1, 13))
-
-spark.createDataFrame(data=months, schema=month_columns) \
-    .createOrReplaceTempView('months')
-
 interesting_months = f"""--sql
     SELECT * FROM months
 """
@@ -436,8 +404,17 @@ result = f"""--sql
 """
 
 
-result = interesting_months
+if __name__ == '__main__':
 
+    spark = createSession()
 
-spark.sql(result).show()
-# non_premium_vs_premium_plot()
+    month_columns = ['year', 'month']
+    months = product(range(2019, 2024), range(1, 13))
+
+    spark.createDataFrame(data=months, schema=month_columns) \
+        .createOrReplaceTempView('months')
+
+    register_udfs(spark)
+    result = interesting_months
+    spark.sql(result).show()
+    # non_premium_vs_premium_plot()
