@@ -52,7 +52,7 @@ tracks = f"""--sql
 """
 
 
-tracks_information = f"""--sql
+track_information = f"""--sql
     SELECT
         *
     FROM ({tracks})
@@ -62,6 +62,6 @@ tracks_information = f"""--sql
 
 if __name__ == '__main__':
     spark = createSession()
-    result = tracks_information
+    result = track_information
 
     spark.sql(result).show()
