@@ -207,7 +207,8 @@ artists_tracks = f"""--sql
         AVG(daily_cost) AS average_daily_cost,
 
         COUNT_IF(storage_class == 'FAST') AS number_of_fast_storage_used,
-        COUNT_IF(storage_class == 'FAST') AS number_of_fast_storage_used,
+        COUNT_IF(storage_class == 'MEDIUM') AS number_of_medium_storage_used,
+        COUNT_IF(storage_class == 'SLOW') AS number_of_slow_storage_used
     FROM ({artists})
     INNER JOIN ({tracks}) USING (artist_id)
     GROUP BY artist_id, genres, number_of_genres
