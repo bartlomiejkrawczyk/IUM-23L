@@ -191,31 +191,6 @@ monthly_user_tracks = f"""--sql
     GROUP BY user_id, track_id, year, month, genres, favourite_genres, duration_ms
 """
 
-user_tracks = f"""--sql
-    SELECT
-        user_id,
-        track_id,
-        COUNT_IF(event_type == 'LIKE') AS number_of_likes,
-        IFNULL(ANY(event_type == 'LIKE'), FALSE) AS liked_track,
-
-        COUNT_IF(event_type == 'SKIP') AS number_of_skips,
-        IFNULL(ANY(event_type == 'SKIP'), FALSE) AS skiped_track,
-
-        COUNT_IF(event_type == 'PLAY') AS number_of_plays,
-        IFNULL(ANY(event_type == 'PLAY'), FALSE) AS played_track,
-
-        TOTAL_TIME_LISTENED_MS(COLLECT_LIST(event_type), COLLECT_LIST(timestamp_s), duration_ms) AS total_time_listened_ms,
-
-        genres,
-        favourite_genres,
-        ARRAY_INTERSECT(genres, favourite_genres) AS user_track_favourite_genre
-    FROM ({tracks})
-    INNER JOIN ({track_genres}) USING (track_id, artist_id)
-    INNER JOIN ({sessions}) USING (track_id)
-    INNER JOIN ({users}) USING (user_id)
-    GROUP BY user_id, track_id, genres, favourite_genres, duration_ms
-"""
-
 premium_users = f"""--sql
     SELECT
         user_id,
@@ -223,8 +198,8 @@ premium_users = f"""--sql
 
         timestamp AS premium_timestamp
 
-    FROM ({users})
-    INNER JOIN ({sessions}) USING (user_id)
+    FROM users
+    INNER JOIN sessions USING (user_id)
     WHERE premium_user AND event_type == 'BUY_PREMIUM'
 """
 
