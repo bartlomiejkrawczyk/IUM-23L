@@ -8,6 +8,9 @@ spark = createSession()
 df = spark.sql(f'SELECT * FROM ({session_information})')
 # df = df.withColumn('target', F.lit('1').cast('bigint'))
 
+method = 'pearson'
+# method = 'spearman'
+
 columns = []
 
 for column, type in df.dtypes:
@@ -20,11 +23,9 @@ assembler = VectorAssembler(inputCols=columns, outputCol=vector_col)
 df_vector = assembler.transform(df).select(vector_col)
 
 # get correlation matrix
-matrix = Correlation.corr(df_vector, vector_col)
+matrix = Correlation.corr(df_vector, vector_col, method=method)
 
-values = matrix.collect()[0][f"pearson({vector_col})"].values
-
-print(columns)
+values = matrix.collect()[0][f"{method}({vector_col})"].values
 
 for column in columns:
     print(f"{column: <30}", end='\t\t')
