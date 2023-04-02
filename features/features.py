@@ -1,6 +1,7 @@
 from spark import createSession
-from matplotlib import pyplot as plt
 from udfs import register_udfs
+
+from non_premium_vs_premium import users_before_premium
 
 from itertools import product  # type: ignore
 
@@ -149,45 +150,6 @@ tracks = f"""--sql
     FROM ({tracks_1})
 """
 
-# I could add here avg, median, min, max, standard variation itp. itd.
-artists_tracks = f"""--sql
-    SELECT
-        artist_id,
-        genres,
-        number_of_genres,
-        COLLECT_LIST(track_id) AS artist_track_ids,
-        COUNT(track_id) AS number_of_tracks,
-        AVG(duration_ms) AS average_duration,
-
-        CAST(MIN(release_date_s) AS timestamp) AS career_start,
-        CAST(AVG(release_date_s) AS timestamp) AS average_release_date,
-        CAST(MAX(release_date_s) AS timestamp) AS career_end,
-        MAX(release_date_s) - MIN(release_date_s) AS career_duration_s,
-
-        AVG(explicit_numerical) AS explicit_songs_ratio,
-        AVG(popularity) AS average_popularity,
-        AVG(acousticness) AS average_acousticness,
-        AVG(danceability) AS average_danceability,
-        AVG(energy) AS average_energy,
-        AVG(instrumentalness) AS average_instrumentalness,
-        AVG(liveness) AS average_liveness,
-        AVG(loudness) AS average_loudness,
-        AVG(speechiness) AS average_speechiness,
-        AVG(tempo) AS average_tempo,
-        AVG(valence) AS average_valence,
-
-        AVG(track_name_length) AS average_track_name_length,
-
-        AVG(daily_cost) AS average_daily_cost,
-
-        COUNT_IF(storage_class == 'FAST') AS number_of_fast_storage_used,
-        COUNT_IF(storage_class == 'MEDIUM') AS number_of_medium_storage_used,
-        COUNT_IF(storage_class == 'SLOW') AS number_of_slow_storage_used
-    FROM ({artists})
-    INNER JOIN ({tracks}) USING (artist_id)
-    GROUP BY artist_id, genres, number_of_genres
-"""
-
 track_genres = f"""--sql
     SELECT
         track_id,
@@ -266,89 +228,6 @@ premium_users = f"""--sql
     WHERE premium_user AND event_type == 'BUY_PREMIUM'
 """
 
-users_before_premium = f"""--sql
-    SELECT
-        user_id,
-        premium_user,
-
-        IFNULL(MIN(timestamp), NOW()) AS non_premium_up_to
-
-    FROM ({users})
-    LEFT JOIN ({sessions}) USING (user_id)
-    WHERE event_type == 'BUY_PREMIUM' OR event_type IS NULL
-    GROUP BY user_id, premium_user
-"""
-
-non_premium_sessions = f"""--sql
-    SELECT
-        *
-    FROM ({sessions})
-    INNER JOIN ({users_before_premium}) USING (user_id)
-    WHERE timestamp < non_premium_up_to
-"""
-
-premium_sessions = f"""--sql
-    SELECT
-        *
-    FROM ({sessions})
-    INNER JOIN ({users_before_premium}) USING (user_id)
-    WHERE timestamp > non_premium_up_to
-"""
-
-non_premium_sessions_event_ratio = f"""--sql
-    SELECT
-        year,
-        month,
-        CONCAT(CAST(year AS string), '-', CAST(month AS string)) AS date,
-
-        COUNT_IF(event_type == 'PLAY') AS play_number,
-        COUNT_IF(event_type == 'SKIP') AS skip_number,
-        COUNT_IF(event_type == 'LIKE') AS like_number,
-        COUNT_IF(event_type == 'ADVERTISEMENT') AS advertisement_number
-    FROM ({non_premium_sessions})
-    GROUP BY year, month
-    ORDER BY year, month
-"""
-
-
-premium_sessions_event_ratio = f"""--sql
-    SELECT
-        year,
-        month,
-        CONCAT(CAST(year AS string), '-', CAST(month AS string)) AS date,
-
-        COUNT_IF(event_type == 'PLAY') AS play_number,
-        COUNT_IF(event_type == 'SKIP') AS skip_number,
-        COUNT_IF(event_type == 'LIKE') AS like_number,
-        COUNT_IF(event_type == 'ADVERTISEMENT') AS advertisement_number
-    FROM ({premium_sessions})
-    GROUP BY year, month
-    ORDER BY year, month
-"""
-
-
-def non_premium_vs_premium_plot():
-    columns = ['play_number', 'skip_number',
-               'like_number', 'advertisement_number']
-    _, axs = plt.subplots(1, 2, figsize=(24, 6), sharey=True)
-
-    spark.sql(non_premium_sessions_event_ratio) \
-        .toPandas() \
-        .plot \
-        .bar(x='date', y=columns, ax=axs[0])  # type: ignore
-
-    axs[0].set_title('non-premium')
-
-    spark.sql(premium_sessions_event_ratio) \
-        .toPandas() \
-        .plot \
-        .bar(x='date', y=columns, ax=axs[1])  # type: ignore
-
-    axs[1].set_title('premium')
-
-    plt.show()
-
-
 positive_loudness_tracks = f"""--sql
     SELECT
         COUNT(*)
@@ -417,4 +296,3 @@ if __name__ == '__main__':
     register_udfs(spark)
     result = interesting_months
     spark.sql(result).show()
-    # non_premium_vs_premium_plot()
