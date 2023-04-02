@@ -1,7 +1,7 @@
 from spark import createSession
 from track_information import track_information
 
-# I could add here avg, median, min, max, standard variation itp. itd.
+# I could add here avg, median, min, max, standard variation etc.
 artist_information = f"""--sql
     SELECT
         artist_id, 
