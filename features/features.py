@@ -3,7 +3,38 @@ from matplotlib import pyplot as plt
 from pyspark.sql.types import IntegerType
 from typing import List
 
+from itertools import product  # type: ignore
+
 spark = createSession()
+
+# ========= #
+#    UDF    #
+# ========= #
+
+
+def total_time_listened_ms(events: List[str], start_s: List[int], duration_ms: int) -> int:
+    previous_start = 0
+    plays = 0
+    skips = 0
+    duration_skipped = 0
+    for event, start in sorted(zip(events, start_s), key=lambda x: x[1]):
+        if event == 'PLAY':
+            plays += 1
+            previous_start = start
+        elif event == 'SKIP':
+            skips += 1
+            duration_skipped += start - previous_start
+
+    return duration_skipped * 1000 + duration_ms * (plays - skips)
+
+
+spark.udf.register("total_time_listened_ms",
+                   total_time_listened_ms, IntegerType())
+
+# =========== #
+#    VIEWS    #
+# =========== #
+
 
 users = f"""--sql
     SELECT
@@ -35,7 +66,25 @@ sessions = f"""--sql
     FROM ({sessions_1})
 """
 
-grouped_session = f"""--sql
+
+# TODO: add groupped sessions with group by user_id, session_id and track_id
+user_session_track = f"""--sql
+    SELECT
+        user_id,
+        session_id,
+        track_id,
+        
+        MIN(timestamp) AS track_session_start,
+        MAX(timestamp) AS track_session_last_event,
+
+        TOTAL_TIME_LISTENED_MS(COLLECT_LIST(event_type), COLLECT_LIST(timestamp_s), )
+
+    FROM ({sessions})
+    INNER JOIN 
+    GROUP BY user_id, session_id, track_id
+"""
+
+grouped_session_1 = f"""--sql
     SELECT
         user_id,
         session_id,
@@ -55,6 +104,24 @@ grouped_session = f"""--sql
         CAST(MAX(timestamp) AS long) - CAST(MIN(timestamp) AS long) AS session_duration
     FROM ({sessions})
     GROUP BY user_id, session_id
+"""
+
+# TODO: include information about tracks and different artists
+grouped_session = f"""--sql
+    SELECT
+        *, 
+        EXTRACT(YEAR FROM session_start) AS year, 
+        EXTRACT(MONTH FROM session_start) AS month
+    FROM ({grouped_session_1})
+"""
+
+grouped_monthly_sessions = f"""--sql
+    SELECT
+        user_id,
+        year,
+        month,
+    FROM ({grouped_session})
+    GROUP BY user_id, year, month
 """
 
 
@@ -156,12 +223,36 @@ track_genres = f"""--sql
 """
 
 
-def total_time_listened(events: List[str], start_s: List[int], duration_ms: int) -> int:
-    # TODO: implement me
-    return 100
+# TODO
+monthly_sessions = f"""--sql
+"""
 
+monthly_user_tracks = f"""--sql
+    SELECT
+        user_id,
+        track_id,
+        year,
+        month,
+        COUNT_IF(event_type == 'LIKE') AS number_of_likes,
+        IFNULL(ANY(event_type == 'LIKE'), FALSE) AS liked_track,
 
-spark.udf.register("total_time_listened", total_time_listened, IntegerType())
+        COUNT_IF(event_type == 'SKIP') AS number_of_skips,
+        IFNULL(ANY(event_type == 'SKIP'), FALSE) AS skiped_track,
+
+        COUNT_IF(event_type == 'PLAY') AS number_of_plays,
+        IFNULL(ANY(event_type == 'PLAY'), FALSE) AS played_track,
+
+        TOTAL_TIME_LISTENED_MS(COLLECT_LIST(event_type), COLLECT_LIST(timestamp_s), duration_ms) AS total_time_listened_ms,
+
+        genres,
+        favourite_genres,
+        ARRAY_INTERSECT(genres, favourite_genres) AS user_track_favourite_genre
+    FROM ({tracks})
+    INNER JOIN ({track_genres}) USING (track_id, artist_id)
+    INNER JOIN ({sessions}) USING (track_id)
+    INNER JOIN ({users}) USING (user_id)
+    GROUP BY user_id, track_id, year, month, genres, favourite_genres, duration_ms
+"""
 
 user_tracks = f"""--sql
     SELECT
@@ -176,7 +267,7 @@ user_tracks = f"""--sql
         COUNT_IF(event_type == 'PLAY') AS number_of_plays,
         IFNULL(ANY(event_type == 'PLAY'), FALSE) AS played_track,
 
-        TOTAL_TIME_LISTENED(COLLECT_LIST(event_type), COLLECT_LIST(timestamp_s), duration_ms) AS total_time_listened,
+        TOTAL_TIME_LISTENED_MS(COLLECT_LIST(event_type), COLLECT_LIST(timestamp_s), duration_ms) AS total_time_listened_ms,
 
         genres,
         favourite_genres,
@@ -299,8 +390,53 @@ positive_loudness_tracks = f"""--sql
 #      FEATURES      #
 # ================== #
 
+# Postaraj się odpowiedzieć na pytanie - Czy dany użytkownik kupi w tym miesiącu premium?
 
-result = user_tracks
+month_columns = ['year', 'month']
+months = product(range(2019, 2024), range(1, 13))
+
+spark.createDataFrame(data=months, schema=month_columns) \
+    .createOrReplaceTempView('months')
+
+interesting_months = f"""--sql
+    SELECT * FROM months
+"""
+
+user_monthly_stats = f"""--sql
+    SELECT
+        *
+    FROM ({users})
+    GROUP BY user_id, year, month
+"""
+
+# this should on per month basis
+user_history_up_to_buy_premium = f"""--sql
+    SELECT
+        *
+    FROM ({user_monthly_stats})
+    INNER JOIN ({users_before_premium}) USING (user_id)
+    WHERE timestamp < non_premium_up_to
+"""
+
+# history up to given month
+user_whole_history_stats = f"""--sql
+    SELECT
+        *
+    FROM ({user_monthly_stats})
+    GROUP BY user_id
+"""
+
+result = f"""--sql
+    SELECT
+        *
+    FROM ({users})
+    INNER JOIN 
+    GROUP BY user_id, year, month
+"""
+
+
+result = interesting_months
+
 
 spark.sql(result).show()
 # non_premium_vs_premium_plot()
