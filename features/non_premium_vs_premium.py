@@ -1,17 +1,26 @@
 from spark import createSession
 from matplotlib import pyplot as plt
 
-users_before_premium = f"""--sql
+users_before_premium_1 = f"""--sql
     SELECT
         user_id,
         premium_user,
 
-        IFNULL(MIN(timestamp), NOW()) AS non_premium_up_to
+        MIN(timestamp) AS non_premium_up_to
 
     FROM users
     LEFT JOIN sessions USING (user_id)
-    WHERE event_type == 'BUY_PREMIUM' OR event_type IS NULL
+    WHERE event_type == 'BUY_PREMIUM'
     GROUP BY user_id, premium_user
+"""
+
+users_before_premium = f"""--sql
+    SELECT
+        user_id,
+        premium_user,
+        IFNULL(non_premium_up_to, NOW()) AS non_premium_up_to
+    FROM users
+    LEFT JOIN ({users_before_premium_1}) USING(user_id, premium_user)
 """
 
 non_premium_sessions = f"""--sql
