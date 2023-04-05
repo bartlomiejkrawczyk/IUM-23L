@@ -27,11 +27,14 @@ matrix = Correlation.corr(df_vector, vector_col, method=method)
 
 values = matrix.collect()[0][f"{method}({vector_col})"].values
 
+print(f"{' ': <30}", end='\t|\t')
 for column in columns:
     print(f"{column: <30}", end='\t|\t')
-print('-|-' * (len(columns) - 1))
+print()
+print('-|-' * (len(columns)))
 
-for y in range(len(columns)):
+for y, column in enumerate(columns):
+    print(f"{columns[y]: <30}", end='\t|\t')
     for x in range(len(columns)):
         print(f"{values[y * len(columns) + x]: <30}", end='\t|\t')
     print()
