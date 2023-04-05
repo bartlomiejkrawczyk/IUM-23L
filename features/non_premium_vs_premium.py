@@ -1,7 +1,7 @@
 from spark import createSession
 from matplotlib import pyplot as plt
 
-users_before_premium_1 = f"""--sql
+bought_premium = f"""--sql
     SELECT
         user_id,
         premium_user,
@@ -20,7 +20,7 @@ users_before_premium = f"""--sql
         premium_user,
         IFNULL(non_premium_up_to, NOW()) AS non_premium_up_to
     FROM users
-    LEFT JOIN ({users_before_premium_1}) USING(user_id, premium_user)
+    LEFT JOIN ({bought_premium}) USING(user_id, premium_user)
 """
 
 non_premium_sessions = f"""--sql
