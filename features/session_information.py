@@ -2,7 +2,7 @@ from spark import createSession
 from track_information import track_information
 from non_premium_vs_premium import users_before_premium
 
-sessions_with_tracks_ = f"""--sql
+sessions_with_tracks = f"""--sql
     SELECT
         session_id,
         timestamp,
@@ -16,7 +16,7 @@ sessions_with_tracks_ = f"""--sql
 session_information_1 = f"""--sql
     SELECT
         *
-    FROM ({sessions_with_tracks_})
+    FROM ({sessions_with_tracks})
     LEFT JOIN ({track_information}) USING (track_id)
     LEFT JOIN user_tracks USING (user_id, track_id)
     INNER JOIN users USING (user_id)
@@ -40,7 +40,7 @@ session_information = f"""--sql
 
         COUNT_IF(event_type == 'ADVERTISEMENT') AS number_of_advertisements,
         COUNT_IF(event_type == 'PLAY') AS number_of_tracks,
-        COUNT_IF(event_type == 'SKIP') AS number_of_skips, -- TODO: ignore skips
+        COUNT_IF(event_type == 'SKIP') AS number_of_skips,
         COUNT_IF(event_type == 'LIKE') AS number_of_likes,
 
         EXTRACT(YEAR FROM MIN(timestamp)) AS year,
@@ -91,4 +91,7 @@ if __name__ == '__main__':
     spark = createSession()
     result = session_information
 
-    spark.sql(result).show()
+    spark.sql(result) \
+        .write \
+        .mode(saveMode='overwrite') \
+        .saveAsTable('session_information')
