@@ -14,7 +14,7 @@ method = 'pearson'
 columns = []
 
 for column, type in df.dtypes:
-    if type in ['int', 'boolean', 'double', 'bigint']:
+    if type in ['int', 'boolean', 'double', 'bigint'] and not '_id' in column:
         columns.append(column)
 
 # convert to vector column first
@@ -28,10 +28,10 @@ matrix = Correlation.corr(df_vector, vector_col, method=method)
 values = matrix.collect()[0][f"{method}({vector_col})"].values
 
 for column in columns:
-    print(f"{column: <30}", end='\t\t')
-print()
+    print(f"{column: <30}", end='\t|\t')
+print('-|-' * (len(columns) - 1))
 
 for y in range(len(columns)):
     for x in range(len(columns)):
-        print(f"{values[y * len(columns) + x]: <30}", end='\t\t')
+        print(f"{values[y * len(columns) + x]: <30}", end='\t|\t')
     print()
