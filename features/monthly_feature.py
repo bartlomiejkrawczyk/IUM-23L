@@ -20,7 +20,7 @@ session_information_1 = f"""--sql
     LEFT JOIN ({track_information}) USING (track_id)
     LEFT JOIN user_tracks USING (user_id, track_id)
     INNER JOIN users USING (user_id)
-    INNER JOIN ({bought_premium}) USING (user_id, premium_user)
+    LEFT JOIN ({bought_premium}) USING (user_id, premium_user)
 """
 
 monthly_session_information = f"""--sql
@@ -30,13 +30,15 @@ monthly_session_information = f"""--sql
         EXTRACT(YEAR FROM MIN(timestamp)) AS year,
         EXTRACT(MONTH FROM MIN(timestamp)) AS month,
 
-        premium_user,
+        -- premium_user,
         premium_user_numerical,
 
-        MONTHS_BETWEEN(non_premium_up_to, MIN(timestamp)) AS months_till_premium,
-        MONTHS_BETWEEN(non_premium_up_to, MIN(timestamp)) <= 1 AS will_buy_premium_next_month,
-        non_premium_up_to,
-        ANY(IFNULL(timestamp > non_premium_up_to, False)) AS had_premium,
+        -- MONTHS_BETWEEN(non_premium_up_to, MIN(timestamp)) AS months_till_premium,
+        -- MONTHS_BETWEEN(non_premium_up_to, MIN(timestamp)) <= 1 AS will_buy_premium_next_month,
+        CAST(IFNULL(MONTHS_BETWEEN(non_premium_up_to, MIN(timestamp)) <= 1, FALSE) AS INTEGER) AS will_buy_premium_next_month_numerical,
+        -- non_premium_up_to,
+        -- ANY(IFNULL(timestamp > non_premium_up_to, False)) AS had_premium,
+        -- CAST(ANY(IFNULL(timestamp > non_premium_up_to, False)) AS INTEGER) AS had_premium_numerical,
 
         -- COLLECT_LIST(track_id) AS track_ids,
         -- COLLECT_LIST(event_type) AS event_types,
@@ -57,34 +59,34 @@ monthly_session_information = f"""--sql
 
         COUNT_IF(IFNULL(timestamp <= date_liked, FALSE)) AS number_of_liked_tracks_listened,
         COUNT_IF(IFNULL(number_of_user_track_favourite_genres > 0, FALSE)) AS number_of_tracks_in_favourite_genre,
-        SUM(number_of_user_track_favourite_genres) AS total_number_of_favourite_genres_listened,
+        IFNULL(SUM(number_of_user_track_favourite_genres), 0) AS total_number_of_favourite_genres_listened,
 
         IFNULL(AVG(CASE WHEN number_of_user_track_favourite_genres > 0 THEN popularity ELSE NULL END), 0) AS average_popularity_in_favourite_genres,
         
         -- tracks specific
-        SUM(duration_ms) AS total_tracks_duration_ms,
+        IFNULL(SUM(duration_ms), 0) AS total_tracks_duration_ms,
 
         COUNT(DISTINCT artist_id) AS number_of_different_artists,
 
-        AVG(release_date_s) AS average_release_date,
-        AVG(duration_ms) AS average_duration_ms,
+        IFNULL(AVG(release_date_s), 0) AS average_release_date,
+        IFNULL(AVG(duration_ms), 0) AS average_duration_ms,
 
-        AVG(explicit_numerical) AS explicit_tracks_ratio,
+        IFNULL(AVG(explicit_numerical), 0) AS explicit_tracks_ratio,
         
-        AVG(popularity) AS average_popularity,
-        AVG(acousticness) AS average_acousticness,
-        AVG(danceability) AS average_danceability,
-        AVG(energy) AS average_energy,
-        AVG(instrumentalness) AS average_instrumentalness,
-        AVG(liveness) AS average_liveness,
-        AVG(loudness) AS average_loudness,
-        AVG(speechiness) AS average_speechiness,
-        AVG(tempo) AS average_tempo,
-        AVG(valence) AS average_valence,
+        IFNULL(AVG(popularity), 0) AS average_popularity,
+        IFNULL(AVG(acousticness), 0) AS average_acousticness,
+        IFNULL(AVG(danceability), 0) AS average_danceability,
+        IFNULL(AVG(energy), 0) AS average_energy,
+        IFNULL(AVG(instrumentalness), 0) AS average_instrumentalness,
+        IFNULL(AVG(liveness), 0) AS average_liveness,
+        IFNULL(AVG(loudness), 0) AS average_loudness,
+        IFNULL(AVG(speechiness), 0) AS average_speechiness,
+        IFNULL(AVG(tempo), 0) AS average_tempo,
+        IFNULL(AVG(valence), 0) AS average_valence,
 
-        AVG(track_name_length) AS average_track_name_length,
+        IFNULL(AVG(track_name_length), 0) AS average_track_name_length,
 
-        AVG(daily_cost) AS average_daily_cost
+        IFNULL(AVG(daily_cost), 0) AS average_daily_cost
     FROM ({session_information_1})
     GROUP BY user_id, session_id, EXTRACT(YEAR FROM timestamp), EXTRACT(MONTH FROM timestamp), premium_user, premium_user_numerical, non_premium_up_to
     HAVING NOT ANY(IFNULL(timestamp > non_premium_up_to, False))
@@ -94,4 +96,4 @@ if __name__ == '__main__':
     spark = createSession()
 
     result = monthly_session_information
-    spark.sql(result).show()
+    spark.sql(result).coalesce(1).write.csv('feature.csv', header=True)
