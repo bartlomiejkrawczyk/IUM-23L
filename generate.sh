@@ -7,5 +7,5 @@ pandoc stage_1.ipynb \
     --pdf-engine=latexmk \
     --from ipynb \
     -o stage_1.pdf \
-    -V geometry:margin=1cm \
+    -V geometry:margin=2cm \
     -F mermaid-filter
