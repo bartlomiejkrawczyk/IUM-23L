@@ -9,3 +9,5 @@ pandoc stage_1.ipynb \
     -o stage_1.pdf \
     -V geometry:margin=2cm \
     -F mermaid-filter
+
+rm mermaid-filter.err
