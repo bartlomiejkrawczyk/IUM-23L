@@ -37,7 +37,7 @@ def main(predicting_model: str):
         data_frame = pd.DataFrame(normalized_data, columns=data.columns)
 
         prediction = {}
-        for target in enumerate(TARGETS):
+        for target in TARGETS:
             predictor = model.predictors[target]
             probability: float = predictor.predict_proba(  # type: ignore
                 data_frame
