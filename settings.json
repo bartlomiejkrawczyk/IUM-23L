@@ -1,7 +1,0 @@
-{
-    "python.analysis.diagnosticSeverityOverrides": {
-        "reportUnknownVariableType": "none",
-        "reportUnknownMemberType": "none"
-    },
-    "python.defaultInterpreterPath": ".venv/bin/python"
-}
