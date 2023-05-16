@@ -4,6 +4,7 @@ import os
 
 from sklearn.metrics import f1_score
 from typing import Dict, List, Tuple, Any
+from xgboost import XGBClassifier
 
 BUCKETS_CNT = 10
 T_ALPHA = 2.101
@@ -26,6 +27,24 @@ def get_most_optimal_threshold(y_train: ArrayLike, y_train_probabilities: ArrayL
         )
         f1_scores_for_thresholds[thr] = score
     return max(f1_scores_for_thresholds, key=lambda i: f1_scores_for_thresholds[i])
+
+
+class OptimalThresholdXGBClassifier(XGBClassifier):
+    def __init__(self, **params: Any):
+        super().__init__(**params)
+
+    def fit(self, X: ArrayLike, y: ArrayLike):
+        super(OptimalThresholdXGBClassifier, self).fit(X, y)
+        probabilities = self.predict_proba(X)
+        self.thr = get_most_optimal_threshold(y, probabilities)
+        return self
+
+    def predict(self, X: ArrayLike) -> np.ndarray:  # type: ignore
+        y_predicted_probabilities = super(
+            OptimalThresholdXGBClassifier,
+            self
+        ).predict_proba(X)
+        return get_prediction_based_on_probabilities(y_predicted_probabilities, self.thr)
 
 
 def load_data() -> pd.DataFrame:
