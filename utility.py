@@ -1,25 +1,31 @@
 import pandas as pd
 import numpy as np
-import numpy.typing as npt
 import os
 
 from sklearn.metrics import f1_score
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Any
 
 BUCKETS_CNT = 10
 T_ALPHA = 2.101
 
+ArrayLike = Any
 
-def get_preds_thr(y_proba: npt.NDArray[np.float64], thr: float) -> 'pd.Series[int]':
+
+def get_prediction_based_on_probabilities(y_proba: ArrayLike, thr: float) -> ArrayLike:
     return pd.Series((y_proba[:, 1] > thr).astype(int))
 
 
-def get_most_optimal_thr(y_train: pd.Series, y_train_proba: np.ndarray) -> float:
-    thrs = np.arange(0, 1, 0.01)
-    f1scores: Dict[float, float] = dict()
-    for thr in thrs:
-        f1scores[thr] = f1_score(y_train, get_preds_thr(y_train_proba, thr))
-    return max(f1scores, key=lambda x: f1scores[x])
+def get_most_optimal_threshold(y_train: ArrayLike, y_train_probabilities: ArrayLike) -> float:
+    tested_thresholds = np.arange(0, 1, 0.01)
+    f1_scores_for_thresholds: Dict[float, float] = dict()
+    for thr in tested_thresholds:
+        score: float = f1_score(  # type: ignore
+            y_train, get_prediction_based_on_probabilities(
+                y_train_probabilities, thr
+            )
+        )
+        f1_scores_for_thresholds[thr] = score
+    return max(f1_scores_for_thresholds, key=lambda i: f1_scores_for_thresholds[i])
 
 
 def load_data() -> pd.DataFrame:
