@@ -1,61 +1,11 @@
 from flask import Flask, request, jsonify
 from sklearn.pipeline import Pipeline
-from sklearn.linear_model import LogisticRegression
-from sklearn.dummy import DummyClassifier
-from xgboost import XGBClassifier
-from utility import OptimalThresholdXGBClassifier
+from utility import OptimalThresholdXGBClassifier, FEATURES, TARGETS, MODEL_TYPES, Model  # type: ignore
 import pandas as pd
 import pickle
-from typing import Dict, Union
+from typing import Dict
 
 app = Flask(__name__)
-
-DUMMY = 'dummy'
-LOGISTIC_REG = 'logistic_regression'
-XGB = 'xgb_classifier'
-RANDOM = 'randomized_search'
-
-MODEL_TYPES = [DUMMY, LOGISTIC_REG, XGB, RANDOM]
-
-TARGETS = [
-    "premium_user_numerical",
-    "will_buy_premium_next_month_numerical"
-]
-
-FEATURES = [
-    'number_of_advertisements',
-    'number_of_tracks',
-    'number_of_skips',
-    'number_of_likes',
-    'number_of_liked_tracks_listened',
-    'number_of_tracks_in_favourite_genre',
-    'total_number_of_favourite_genres_listened',
-    'average_popularity_in_favourite_genres',
-    'total_tracks_duration_ms',
-    'number_of_different_artists',
-    'average_release_date',
-    'average_duration_ms',
-    'explicit_tracks_ratio',
-    'average_popularity',
-    'average_acousticness',
-    'average_danceability',
-    'average_energy',
-    'average_instrumentalness',
-    'average_liveness',
-    'average_loudness',
-    'average_speechiness',
-    'average_tempo',
-    'average_valence',
-    'average_track_name_length',
-    'average_daily_cost'
-]
-
-Model = Union[
-    DummyClassifier,
-    LogisticRegression,
-    XGBClassifier,
-    OptimalThresholdXGBClassifier
-]
 
 
 class IUMModel:
