@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from sklearn.pipeline import Pipeline
-from utility import OptimalThresholdXGBClassifier, FEATURES, TARGETS, MODEL_TYPES, Model  # type: ignore
+from utility import FEATURES, TARGETS, MODEL_TYPES, Model  # type: ignore
 import pandas as pd
 import pickle
 from typing import Dict
