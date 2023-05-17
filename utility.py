@@ -33,7 +33,7 @@ FEATURES = [
     'average_tempo',
     'average_valence',
     'average_track_name_length',
-    'average_daily_cost'
+    'average_daily_cost',
 ]
 
 TARGETS = [
@@ -53,47 +53,10 @@ MODEL_TYPES = [DUMMY, LOGISTIC_REG, XGB, RANDOM]
 
 ArrayLike = Any
 
-
-def get_prediction_based_on_probabilities(y_proba: ArrayLike, thr: float) -> ArrayLike:
-    return pd.Series((y_proba[:, 1] > thr).astype(int))
-
-
-def get_most_optimal_threshold(y_train: ArrayLike, y_train_probabilities: ArrayLike) -> float:
-    tested_thresholds = np.arange(0, 1, 0.01)
-    f1_scores_for_thresholds: Dict[float, float] = dict()
-    for thr in tested_thresholds:
-        score: float = f1_score(  # type: ignore
-            y_train, get_prediction_based_on_probabilities(
-                y_train_probabilities, thr
-            )
-        )
-        f1_scores_for_thresholds[thr] = score
-    return max(f1_scores_for_thresholds, key=lambda i: f1_scores_for_thresholds[i])
-
-
-class OptimalThresholdXGBClassifier(XGBClassifier):
-    def __init__(self, **params: Any):
-        super().__init__(**params)
-
-    def fit(self, X: ArrayLike, y: ArrayLike):
-        super(OptimalThresholdXGBClassifier, self).fit(X, y)
-        probabilities = self.predict_proba(X)
-        self.thr = get_most_optimal_threshold(y, probabilities)
-        return self
-
-    def predict(self, X: ArrayLike) -> np.ndarray:  # type: ignore
-        y_predicted_probabilities = super(
-            OptimalThresholdXGBClassifier,
-            self
-        ).predict_proba(X)
-        return get_prediction_based_on_probabilities(y_predicted_probabilities, self.thr)
-
-
 Model = Union[
     DummyClassifier,
     LogisticRegression,
-    XGBClassifier,
-    OptimalThresholdXGBClassifier
+    XGBClassifier
 ]
 
 
