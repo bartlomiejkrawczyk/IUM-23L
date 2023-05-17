@@ -22,15 +22,12 @@ def load_model(type: str) -> IUMModel:
         return pickle.load(f)
 
 
-MODELS = {
-    type: load_model(type)
-    for type in MODEL_TYPES
-}
+models = {}
 
 
 @app.route("/predict/<predicting_model>", methods=['POST'])
 def main(predicting_model: str):
-    model = MODELS[predicting_model]
+    model = models[predicting_model]
 
     data = pd.json_normalize(request.json)[FEATURES]  # type: ignore
     normalized_data = model.pipeline.transform(data)
@@ -49,4 +46,8 @@ def main(predicting_model: str):
 
 
 if __name__ == "__main__":
+    models = {
+        type: load_model(type)
+        for type in MODEL_TYPES
+    }
     app.run(debug=True)
