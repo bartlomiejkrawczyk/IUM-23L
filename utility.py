@@ -36,9 +36,6 @@ TARGETS = [
     "will_buy_premium_next_month_numerical"
 ]
 
-BUCKETS_CNT = 10
-T_ALPHA = 2.101
-
 DUMMY = 'dummy'
 LOGISTIC_REG = 'logistic_regression'
 XGB = 'xgb_classifier'
