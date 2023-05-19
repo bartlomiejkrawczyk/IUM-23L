@@ -1,6 +1,6 @@
 #!/bin/bash
 
-curl --location 'http://127.0.0.1:5000/predict' \
+curl --location 'http://127.0.0.1:5000/predict/xgb_classifier_best_estimator' \
 --header 'Content-Type: application/json' \
 --data '{
     "number_of_advertisements": 0,
