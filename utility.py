@@ -43,7 +43,6 @@ DUMMY = 'dummy'
 LOGISTIC_REG = 'logistic_regression'
 XGB = 'xgb_classifier'
 XGB_BEST_ESTIMATOR = 'xgb_classifier_best_estimator'
-RANDOM = 'randomized_search'
 
 MODEL_TYPES = [DUMMY, LOGISTIC_REG, XGB, XGB_BEST_ESTIMATOR]
 
