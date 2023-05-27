@@ -1,10 +1,12 @@
 #!.venv/bin/python3
-from flask import Flask, request, jsonify, abort
-from sklearn.pipeline import Pipeline
-from utility import FEATURES, TARGETS, MODEL_TYPES, Model  # type: ignore
-import pandas as pd
 import pickle
 from typing import Dict
+
+import pandas as pd
+from flask import Flask, abort, jsonify, request
+from sklearn.pipeline import Pipeline
+
+from utility import FEATURES, MODEL_TYPES, TARGETS, USER_ID, Model
 
 app = Flask(__name__)
 
@@ -19,42 +21,65 @@ class IUMModel:
 
 
 def load_model(type: str) -> IUMModel:
-    with open(f"models/{type}.pkl", "rb") as f:
+    with open(f'models/{type}.pkl', 'rb') as f:
         return pickle.load(f)
 
 
-models = {}
-
-# TODO: redirect by user id to specific model for prediction
-# TODO: store prediction for future use
-# TODO: add endpoint for retrieving results for given month
+models_db = {}
 
 
-@app.route("/predict/<predicting_model>", methods=['POST'])
-def predict(predicting_model: str):
-    if predicting_model not in models.keys():
-        abort(404)
+def predict(model_type: str, features: pd.DataFrame) -> Dict[str, bool]:
+    model = models_db[model_type]
+    normalized_data = model.pipeline.transform(features)
 
-    model = models[predicting_model]
+    data_frame = pd.DataFrame(normalized_data, columns=features.columns)
 
-    data = pd.json_normalize(request.json)[FEATURES]  # type: ignore
-    normalized_data = model.pipeline.transform(data)
-
-    data_frame = pd.DataFrame(normalized_data, columns=data.columns)
-
-    prediction = {}
+    prediction: Dict[str, bool] = {}
     for target in TARGETS:
         predictor = model.target_estimators[target]
         prediction[target] = bool(
-            predictor.predict(data_frame)[
-                0] == 1  # type: ignore
+            predictor.predict(data_frame)[0] == 1  # type: ignore
         )
 
+    return prediction
+
+
+def get_model_type(user_id: int) -> str:
+    size = len(MODEL_TYPES)
+    reality = hash(str(user_id)) % size
+    return MODEL_TYPES[reality]
+
+
+@app.route('/ab/', methods=['POST'])
+def ab_experiment_endpoint():
+    data = pd.json_normalize(request.json)  # type: ignore
+    id: int = data.iloc[0][USER_ID]  # type: ignore
+    model_type = get_model_type(id)
+    features = data[FEATURES]
+    prediction = predict(model_type, features)
+    for target in TARGETS:
+        pd.DataFrame({
+            "guess": [1 if prediction[target] else 0],
+            "ground_truth": [prediction[target]],
+            "model": [model_type],
+            "year": [data['year']],
+            "month": [data['month']],
+            "user_id": [id],
+        }).to_csv(f'ab_experiment/{model_type}-{target}.csv', mode='a')
     return jsonify(prediction)
 
 
-if __name__ == "__main__":
-    models = {
+@app.route('/predict/<predicting_model>', methods=['POST'])
+def predict_endpoint(predicting_model: str):
+    if predicting_model not in models_db.keys():
+        abort(404)
+    data = pd.json_normalize(request.json)[FEATURES]  # type: ignore
+    prediction = predict(predicting_model, data)
+    return jsonify(prediction)
+
+
+if __name__ == '__main__':
+    models_db = {
         type: load_model(type)
         for type in MODEL_TYPES
     }

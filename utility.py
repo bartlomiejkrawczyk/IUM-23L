@@ -9,6 +9,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import confusion_matrix, roc_auc_score
 from xgboost import XGBClassifier
 
+USER_ID = 'user_id'
+
 FEATURES = [
     'number_of_advertisements',
     'number_of_tracks',
@@ -38,8 +40,8 @@ FEATURES = [
 ]
 
 TARGETS = [
-    "premium_user_numerical",
-    "will_buy_premium_next_month_numerical"
+    'premium_user_numerical',
+    'will_buy_premium_next_month_numerical'
 ]
 
 TARGET_AND_FEATURES = TARGETS + FEATURES
@@ -68,8 +70,8 @@ def plot_matrix(matrix: DataFrame) -> None:
         xticklabels=matrix.columns,  # type: ignore
         yticklabels=matrix.columns,  # type: ignore
         annot=True,
-        annot_kws={"fontsize": 7},
-        fmt=".0%",
+        annot_kws={'fontsize': 7},
+        fmt='.0%',
         vmin=-1,
         vmax=1,
     )
@@ -96,15 +98,15 @@ def plot_confusion_matrix(models: Dict[str, Model], X_test: DataFrame, Y_test: D
         y_predicted = model.predict(X_test)
         y_true = Y_test[target]
         roc_auc_score_value = roc_auc_score(y_true, y_predicted)
-        print(f"ROC AUC score for {target}: {roc_auc_score_value}")
+        print(f'ROC AUC score for {target}: {roc_auc_score_value}')
         matrix = confusion_matrix(y_true, y_predicted)
         sns.heatmap(
             matrix,
             annot=True,
-            annot_kws={"fontsize": 30},
+            annot_kws={'fontsize': 30},
             fmt='g',
-            xticklabels=["0", "1"],  # type: ignore
-            yticklabels=["0", "1"],  # type: ignore
+            xticklabels=['0', '1'],  # type: ignore
+            yticklabels=['0', '1'],  # type: ignore
             ax=axs[i]  # type: ignore
         )
     plt.show()
@@ -135,21 +137,21 @@ def plot_feature_importances(models: Dict[str, Model]) -> None:
         model = models[target]
         columns = FEATURES
         weights = retrieve_weights(model)
-        axs[i].barh(y=columns, width=weights, edgecolor="black")
+        axs[i].barh(y=columns, width=weights, edgecolor='black')
         axs[i].set_title(
-            f"Model: {type} - feature importances for target {target}")
+            f'Model: {type} - feature importances for target {target}')
     plt.show()
 
 
 SERVICE_PREDICTION_MODEL_INIT = {
     type: {
         target: DataFrame({
-            "guess": [],
-            "ground_truth": [],
-            "model": [],
-            "year": [],
-            "month": [],
-            "user_id": [],
+            'guess': [],
+            'ground_truth': [],
+            'model': [],
+            'year': [],
+            'month': [],
+            'user_id': [],
         })
         for target in TARGETS
     }
