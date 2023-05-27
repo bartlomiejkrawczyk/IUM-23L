@@ -110,6 +110,12 @@ def plot_confusion_matrix(models: Dict[str, Model], X_test: DataFrame, Y_test: D
     plt.show()
 
 
+def get_params(model: Model) -> Optional[Dict[str, Any]]:
+    if isinstance(model, XGBClassifier):
+        return model.get_params()
+    return None
+
+
 def retrieve_weights(model: Model) -> np.ndarray[np.float64]:
     if isinstance(model, LogisticRegression):
         return model.coef_[0]
@@ -119,8 +125,12 @@ def retrieve_weights(model: Model) -> np.ndarray[np.float64]:
 
 
 def plot_feature_importances(models: Dict[str, Model]) -> None:
-    _, axs = plt.subplots(1, len(TARGETS), figsize=(
-        30, 10), constrained_layout=True)
+    _, axs = plt.subplots(
+        1,
+        len(TARGETS),
+        figsize=(30, 10),
+        constrained_layout=True
+    )
     for i, target in enumerate(TARGETS):
         model = models[target]
         columns = FEATURES
@@ -129,3 +139,19 @@ def plot_feature_importances(models: Dict[str, Model]) -> None:
         axs[i].set_title(
             f"Model: {type} - feature importances for target {target}")
     plt.show()
+
+
+SERVICE_PREDICTION_MODEL_INIT = {
+    type: {
+        target: DataFrame({
+            "guess": [],
+            "ground_truth": [],
+            "model": [],
+            "year": [],
+            "month": [],
+            "user_id": [],
+        })
+        for target in TARGETS
+    }
+    for type in MODEL_TYPES
+}

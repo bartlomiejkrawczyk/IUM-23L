@@ -25,130 +25,35 @@ Jak każda szanująca się firma internetowa, Pozytywka zbiera dane dotyczące s
 
 (analitycy mogą wnioskować o dostęp do tych informacji na potrzeby realizacji zadania)
 
-## Zadanie
 
-Jakiś czas temu wprowadziliśmy konta premium, które uwalniają użytkowników od słuchania reklam.
-Nie są one jednak jeszcze zbyt popularne - czy możemy się dowiedzieć, które osoby są bardziej skłonne do zakupu takiego konta?
+# Serwis
 
-# Definicja Problemu Biznesowego
+## Wymagania
 
-**Kontekst:** serwis muzyczny, który pozwala na odtwarzanie utworów online.
+W celu odpalenia aplikacji wymagana jest instalacja zależności. Warto to zrobić z wykorzystaniem venv:
+```
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
 
-Serwis udostępnia dwa pakiety:
-- darmowy - użytkownicy pomiędzy piosenkami mają puszczane reklamy
-- premium - użytkownicy dowoli mogą słuchać muzyki bez reklam
+## Sposób uruchomienia
 
-**Zadanie biznesowe:** uargumentowanie decyzji, dlaczego dany użytkownik zdecydował się wybrać konto premium
+Możliwe jest bezpośrednie wywołanie skryptu `microservice.py`:
+```shell
+python ./microservice.py
+```
 
-**Biznesowe kryterium sukcesu:** TODO - system przewiduje z pewnością 70%, że dany użytkownik kupi konto premium xD
+Za pomocą flask:
+```shell
+flask --app microservice run
+```
 
+Wywołanie skryptu `microservice.py`:
+```shell
+./microservice.py
+```
 
-### Zrozumienie zagadnienia
-<!-- Musimy zrozumieć, co tak naprawdę jest do zrobienia i ustalić, jak to osiągnąć. -->
+## Endpoint-y
 
-1. Określenie celu biznesowego
-    - Opis kontekstu.
-    - Zdefiniowanie celów biznesowych.
-    - Biznesowe kryterium sukcesu.
-2. Ocena aktualnej sytuacji.
-    - Spis dostępnych zasobów.
-    - Lista wymagań, założeń i ograniczeń.
-    - Zidentyfikowanie zagrożeń dla projektu.
-    - Słowniczek terminologii (biznesowej i analitycznej).
-    - Analiza kosztów i zysków z projektu.
-3. Określenie celów modelowania.
-    - Opis zadań modelowania.
-    - Definicja kryteriów sukcesu z perspektywy analitycznej.
-4. Przygotowanie planu projektu.
-    - Plan etapów projektu.
-    - Wstępne propozycje narzędzi i metod.
-
-
-# Analiza Danych z Perspektywy Realizacji Zadań
-
-### Zrozumienie danych
-<!-- Wstępne zebranie i przeanalizowanie danych. -->
-
-1. Zebranie wstępnego zbioru danych do modelowania 
-    - raport podsumowujący zebrane dane.
-2. Techniczny opis danych 
-    - raport opisujący format danych, ich ilość, atrybuty, itp.
-3. Eksploracja danych 
-    - raport z eksploracji, wstępne hipotezy.
-4. Weryfikacja jakości danych 
-    - raport podsumowujący znalezione problemy i sugestie ich rozwiązań.
-
-
-### Przygotowanie danych
-
-<!-- Przygotowanie finalnego zbioru danych do modelowania, w tym oczyszczanie danych, selekcja atrybutów, feature engineering itd. -->
-
-1. Selekcja danych (zarówno atrybuty jak i rekordy)
-    - uzasadnienie dlaczego taki, a nie inny wybór.
-2. Czyszczenie danych
-    - raport z podjętych kroków.
-3. Generowanie atrybutów/rekordów.
-    - Opis utworzonych atrybutów.
-    - Opis wygenerowanych rekordów (np. sztucznych rekordów dla klientów, którzy w danym roku nie dokonali zakupu).
-4. Integracja danych
-    - zintegrowane dane z wielu źródeł.
-5. Zmiana formatu danych
-    - przeformatowane dane.
-
-### Modelowanie
-
-<!-- Wybór algorytmów, architektury modeli, strojenie hiperparametrów, trening. -->
-
-1. Wybór metody modelowania.
-    - Opis wybranej metody.
-    - Przyjęte założenia modelowania.
-2. Opracowanie przebiegu eksperymentu
-    - opis tego, jak będzie wykonywane trenowanie i ocena modelu.
-3. Konstrukcja modelu.
-    - Opis hiperparametrów.
-    - Wytrenowane modele.
-    - Opis modeli, ich interpretacja.
-4. Ewaluacja modelu.
-    - Podsumowanie uzyskanych wyników, miar błędu, itp.
-    - Krytyczne wnioski odnośnie ustawień hiperparametrów (przydatne do następnej iteracji).
-
-### Ewaluacja
-
-<!-- Ocena przygotowanych modeli i procedury ich generowania z perspektywy zagadnienia biznesowego. -->
-
-1. Ocena rezultatów z perspektywy biznesowej.
-    - Ocena wyników pod kątem kryteriów sukcesu.
-    - Lista zaakceptowanych modeli.
-2. Retrospektywna analiza całego procesu
-    - podsumowanie podkreślające brakujące elementy, niedopatrzenia.
-3. Ustalenie sposobu dalszego postępowania (czy kontynuujemy prace).
-    - Lista możliwych dalszych kroków.
-    - Uzasadnione decyzje odnośnie dalszego postępowania.
-
-### Wdrożenie
-
-<!-- Wdrożenie przygotowanego modelu do użycia. -->
-
-1. Zaplanowanie wdrożenia
-    - plan.
-2. Zaplanowanie kwestii związanych z monitorowaniem i utrzymaniem
-    - plan.
-3. Przygotowanie finalnego raportu
-    - raport + prezentacja.
-4. Rewizja projektu
-    - podsumowanie doświadczeń/wiedzy zdobytej podczas realizacji projektu.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+## Eksperymenty A/B

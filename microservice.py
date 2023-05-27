@@ -1,3 +1,4 @@
+#!.venv/bin/python3
 from flask import Flask, request, jsonify, abort
 from sklearn.pipeline import Pipeline
 from utility import FEATURES, TARGETS, MODEL_TYPES, Model  # type: ignore
@@ -24,9 +25,13 @@ def load_model(type: str) -> IUMModel:
 
 models = {}
 
+# TODO: redirect by user id to specific model for prediction
+# TODO: store prediction for future use
+# TODO: add endpoint for retrieving results for given month
+
 
 @app.route("/predict/<predicting_model>", methods=['POST'])
-def main(predicting_model: str):
+def predict(predicting_model: str):
     if predicting_model not in models.keys():
         abort(404)
 
