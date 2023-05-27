@@ -33,7 +33,10 @@ def predict(model_type: str, features: pd.DataFrame) -> Dict[str, bool]:
     model = models_db[model_type]
     normalized_data = model.pipeline.transform(features)
 
-    data_frame = pd.DataFrame(normalized_data, columns=features.columns)
+    data_frame = pd.DataFrame(
+        normalized_data,  # type: ignore
+        columns=features.columns
+    )
 
     prediction: Dict[str, bool] = {}
     for target in TARGETS:
@@ -62,9 +65,9 @@ def initialize():
         for target in TARGETS:
             name = f'ab_experiment/{type}-{target}.csv'
             os.remove(name)
+            # TODO: I should not be able to get ground truth here, hmm
             pd.DataFrame({
                 'guess': [],
-                'ground_truth': [],
                 'model': [],
                 'year': [],
                 'month': [],
@@ -84,9 +87,9 @@ def ab_experiment_endpoint():
     prediction = predict(model_type, features)
     print(model_type, id)
     for target in TARGETS:
+        # TODO: I should not be able to get ground truth here, hmm
         pd.DataFrame({
             "guess": [1 if prediction[target] else 0],
-            "ground_truth": [prediction[target]],
             "model": [model_type],
             "year": [row['year']],
             "month": [row['month']],
