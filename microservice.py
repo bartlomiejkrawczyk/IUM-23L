@@ -1,4 +1,5 @@
 #!.venv/bin/python3
+import os
 import pickle
 from typing import Dict
 
@@ -50,22 +51,52 @@ def get_model_type(user_id: int) -> str:
     return MODEL_TYPES[reality]
 
 
+@app.route('/init/', methods=['POST'])
+def initialize():
+    global models_db
+    models_db = {
+        type: load_model(type)
+        for type in MODEL_TYPES
+    }
+    for type in MODEL_TYPES:
+        for target in TARGETS:
+            name = f'ab_experiment/{type}-{target}.csv'
+            os.remove(name)
+            pd.DataFrame({
+                'guess': [],
+                'ground_truth': [],
+                'model': [],
+                'year': [],
+                'month': [],
+                'user_id': [],
+            }).to_csv(name, index=False)
+
+    return {'message': 'Success'}
+
+
 @app.route('/ab/', methods=['POST'])
 def ab_experiment_endpoint():
     data = pd.json_normalize(request.json)  # type: ignore
-    id: int = data.iloc[0][USER_ID]  # type: ignore
+    row = data.iloc[0]
+    id: int = row[USER_ID]  # type: ignore
     model_type = get_model_type(id)
     features = data[FEATURES]
     prediction = predict(model_type, features)
+    print(model_type, id)
     for target in TARGETS:
         pd.DataFrame({
             "guess": [1 if prediction[target] else 0],
             "ground_truth": [prediction[target]],
             "model": [model_type],
-            "year": [data['year']],
-            "month": [data['month']],
+            "year": [row['year']],
+            "month": [row['month']],
             "user_id": [id],
-        }).to_csv(f'ab_experiment/{model_type}-{target}.csv', mode='a')
+        }).to_csv(
+            f'ab_experiment/{model_type}-{target}.csv',
+            mode='a',
+            index=False,
+            header=False
+        )
     return jsonify(prediction)
 
 
@@ -79,8 +110,5 @@ def predict_endpoint(predicting_model: str):
 
 
 if __name__ == '__main__':
-    models_db = {
-        type: load_model(type)
-        for type in MODEL_TYPES
-    }
+    initialize()
     app.run(debug=True)
