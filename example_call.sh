@@ -3,6 +3,9 @@
 curl --location 'http://127.0.0.1:5000/predict/xgb_classifier_best_estimator' \
 --header 'Content-Type: application/json' \
 --data '{
+    "user_id": 0,
+    "month": 1,
+    "year": 2023,
     "number_of_advertisements": 0,
     "number_of_tracks": 0,
     "number_of_skips": 0,

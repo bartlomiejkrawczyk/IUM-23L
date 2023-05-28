@@ -99,17 +99,36 @@ def plot_confusion_matrix(models: Dict[str, Model], X_test: DataFrame, Y_test: D
         y_true = Y_test[target]
         roc_auc_score_value = roc_auc_score(y_true, y_predicted)
         print(f'ROC AUC score for {target}: {roc_auc_score_value}')
-        matrix = confusion_matrix(y_true, y_predicted)
-        sns.heatmap(
-            matrix,
-            annot=True,
-            annot_kws={'fontsize': 30},
-            fmt='g',
-            xticklabels=['0', '1'],  # type: ignore
-            yticklabels=['0', '1'],  # type: ignore
-            ax=axs[i]  # type: ignore
-        )
+        subplot_confusion_matrix(axs[i], y_true, y_predicted)
     plt.show()
+
+
+def plot_confusion_matrix_ab_experiment(result: Dict[str, DataFrame]):
+    _, axs = plt.subplots(1, 2, figsize=(24, 10))  # type: ignore
+    for i, target in enumerate(TARGETS):
+        roc_auc_score_value = roc_auc_score(
+            result[target].ground_truth, result[target].guess
+        )
+        print(f'ROC AUC score for {target}: {roc_auc_score_value}')
+        subplot_confusion_matrix(
+            axs[i],
+            result[target].ground_truth,
+            result[target].guess
+        )
+    plt.plot()
+
+
+def subplot_confusion_matrix(ax: Any, y_true: ArrayLike, y_predicted: ArrayLike) -> None:
+    matrix = confusion_matrix(y_true, y_predicted)
+    sns.heatmap(
+        matrix,
+        annot=True,
+        annot_kws={'fontsize': 30},
+        fmt='g',
+        xticklabels=['0', '1'],  # type: ignore
+        yticklabels=['0', '1'],  # type: ignore
+        ax=ax  # type: ignore
+    )
 
 
 def get_params(model: Model) -> Optional[Dict[str, Any]]:
@@ -147,7 +166,6 @@ SERVICE_PREDICTION_MODEL_INIT = {
     type: {
         target: DataFrame({
             'guess': [],
-            'ground_truth': [],
             'model': [],
             'year': [],
             'month': [],

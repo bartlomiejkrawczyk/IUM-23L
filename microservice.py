@@ -56,16 +56,25 @@ def get_model_type(user_id: int) -> str:
 
 @app.route('/init/', methods=['POST'])
 def initialize():
+    initialize_models()
+    clear()
+    return {'message': 'Success'}
+
+
+def initialize_models() -> None:
     global models_db
     models_db = {
         type: load_model(type)
         for type in MODEL_TYPES
     }
+
+
+def clear() -> None:
     for type in MODEL_TYPES:
         for target in TARGETS:
             name = f'ab_experiment/{type}-{target}.csv'
-            os.remove(name)
-            # TODO: I should not be able to get ground truth here, hmm
+            if os.path.exists(name):
+                os.remove(name)
             pd.DataFrame({
                 'guess': [],
                 'model': [],
@@ -73,8 +82,6 @@ def initialize():
                 'month': [],
                 'user_id': [],
             }).to_csv(name, index=False)
-
-    return {'message': 'Success'}
 
 
 @app.route('/ab/', methods=['POST'])
@@ -87,13 +94,12 @@ def ab_experiment_endpoint():
     prediction = predict(model_type, features)
     print(model_type, id)
     for target in TARGETS:
-        # TODO: I should not be able to get ground truth here, hmm
         pd.DataFrame({
             "guess": [1 if prediction[target] else 0],
             "model": [model_type],
-            "year": [row['year']],
-            "month": [row['month']],
-            "user_id": [id],
+            "year": [int(row['year'])],  # type: ignore
+            "month": [int(row['month'])],  # type: ignore
+            "user_id": [int(id)],
         }).to_csv(
             f'ab_experiment/{model_type}-{target}.csv',
             mode='a',
@@ -113,5 +119,5 @@ def predict_endpoint(predicting_model: str):
 
 
 if __name__ == '__main__':
-    initialize()
+    initialize_models()
     app.run(debug=True)
