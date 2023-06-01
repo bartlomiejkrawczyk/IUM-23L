@@ -3,7 +3,8 @@ from typing import Any, Dict, Optional, Union
 import numpy as np
 import seaborn as sns
 from matplotlib import pyplot as plt
-from pandas import DataFrame
+from pandas import DataFrame, concat
+from statistics import stdev, mean
 from sklearn.dummy import DummyClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import confusion_matrix, roc_auc_score
@@ -52,6 +53,8 @@ XGB = 'xgb_classifier'
 XGB_BEST_ESTIMATOR = 'xgb_classifier_best_estimator'
 
 MODEL_TYPES = [DUMMY, LOGISTIC_REG, XGB, XGB_BEST_ESTIMATOR]
+
+AB_RESULT = ['guess', 'ground_truth', 'model', 'year', 'month', 'user_id']
 
 ArrayLike = Any
 
@@ -160,6 +163,65 @@ def plot_feature_importances(models: Dict[str, Model]) -> None:
         axs[i].set_title(
             f'Model: {type} - feature importances for target {target}')
     plt.show()
+
+
+def compare_models(
+        result: DataFrame,
+        type_A: str,
+        type_B: str,
+        buckets: int,
+        t_alpha: float,
+        s_p: callable,
+        t: callable) -> None:
+    for target in TARGETS:
+        print(target)
+        reality_A: DataFrame = result[type_A][target]
+        reality_B: DataFrame = result[type_B][target]
+
+        data = concat([reality_A, reality_B])
+        random_ordered_ids = np.random.permutation(
+            data['user_id'].unique()
+        )
+        size = len(random_ordered_ids) // buckets
+
+        reality_A_score = []
+        reality_B_score = []
+
+        for bucket in range(buckets):
+            ids = random_ordered_ids[bucket * size:(bucket + 1) * size]
+            mask = data['user_id'].isin(ids)
+            bucket_data = data.loc[mask]
+            reality_A_data = bucket_data.loc[bucket_data['model'] == type_A]
+            reality_B_data = bucket_data.loc[bucket_data['model'] == type_B]
+
+            reality_A_score.append(
+                roc_auc_score(
+                    reality_A_data['ground_truth'],
+                    reality_A_data['guess'],
+                )
+            )
+            reality_B_score.append(
+                roc_auc_score(
+                    reality_B_data['ground_truth'],
+                    reality_B_data['guess']
+                )
+            )
+
+        s_p_value = s_p(stdev(reality_A_score), stdev(reality_B_score))
+        if s_p_value != 0:
+            t_value = t(
+                mean(reality_A_score),
+                mean(reality_B_score),
+                s_p_value
+            )
+        else:
+            t_value = 0
+
+        if t_value > t_alpha:
+            print(f'{type_A} is better than {type_B}')
+        else:
+            print(f'We can\'t say that {type_A} is better than {type_B}')
+        print()
 
 
 SERVICE_PREDICTION_MODEL_INIT = {

@@ -4,7 +4,7 @@ import pickle
 from typing import Dict
 
 import pandas as pd
-from flask import Flask, abort, jsonify, request
+from flask import Flask, abort, jsonify, request, send_from_directory
 from sklearn.pipeline import Pipeline
 
 from utility import FEATURES, MODEL_TYPES, TARGETS, USER_ID, Model
@@ -116,6 +116,11 @@ def predict_endpoint(predicting_model: str):
     data = pd.json_normalize(request.json)[FEATURES]  # type: ignore
     prediction = predict(predicting_model, data)
     return jsonify(prediction)
+
+
+@app.route('/', methods=['GET'])
+def index():
+    return send_from_directory('static', 'index.html')
 
 
 if __name__ == '__main__':
