@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional, Union, Callable
 
 import numpy as np
 import seaborn as sns
@@ -171,8 +171,8 @@ def compare_models(
         type_B: str,
         buckets: int,
         t_alpha: float,
-        s_p: callable,
-        t: callable) -> None:
+        s_p: Callable[[float, float], float],
+        t: Callable[[float, float, float], float]) -> None:
     for target in TARGETS:
         print(target)
         reality_A: DataFrame = result[type_A][target]
@@ -180,7 +180,7 @@ def compare_models(
 
         data = concat([reality_A, reality_B])
         random_ordered_ids = np.random.permutation(
-            data['user_id'].unique()
+            data['user_id'].unique()  # type: ignore
         )
         size = len(random_ordered_ids) // buckets
 
@@ -217,6 +217,7 @@ def compare_models(
         else:
             t_value = 0
 
+        print('t_value = ', t_value)
         if t_value > t_alpha:
             print(f'{type_A} is better than {type_B}')
         else:
