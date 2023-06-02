@@ -3,7 +3,7 @@ from typing import Any, Dict, Optional, Union, Callable
 import numpy as np
 import seaborn as sns
 from matplotlib import pyplot as plt
-from pandas import DataFrame, concat
+from pandas import DataFrame, concat, read_csv
 from statistics import stdev, mean
 from sklearn.dummy import DummyClassifier
 from sklearn.linear_model import LogisticRegression
@@ -238,3 +238,20 @@ SERVICE_PREDICTION_MODEL_INIT = {
     }
     for type in MODEL_TYPES
 }
+
+
+def store_result(result: Dict[str, Dict[str, DataFrame]]) -> None:
+    for type in MODEL_TYPES:
+        for target in TARGETS:
+            result[type][target].to_csv(f'ab_result/{type}-{target}.csv')
+
+
+def restore_result() -> Dict[str, Dict[str, DataFrame]]:
+    result = {}
+    for type in MODEL_TYPES:
+        result[type] = {}
+        for target in TARGETS:
+            result[type][target] = read_csv(
+                f'ab_result/{type}-{target}.csv'
+            )
+    return result
