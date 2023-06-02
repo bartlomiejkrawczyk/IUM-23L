@@ -217,6 +217,7 @@ def compare_models(
         else:
             t_value = 0
 
+        print('t_value = ', t_value)
         if t_value > t_alpha:
             print(f'{type_A} is better than {type_B}')
         else:
